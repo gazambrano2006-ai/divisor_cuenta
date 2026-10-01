@@ -1,50 +1,57 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+﻿<!--
+Informe de impacto de sincronización (material temporal de revisión)
+- Versión: plantilla sin versión → 1.0.0; adopción inicial.
+- Principios definidos: Calidad de código; Arquitectura; Seguridad;
+  Calidad y pruebas; Regla de la materia.
+- Secciones añadidas: contenido de los cinco principios solicitados.
+- Secciones omitidas: restricciones adicionales y flujo de desarrollo de la
+  plantilla, porque el usuario no ha definido otros principios.
+- Gobernanza: no se añaden políticas ni obligaciones distintas de las solicitadas.
+- Archivos relacionados: plantillas y código de la aplicación sin cambios.
+- Pendientes: ninguno.
+Este informe es temporal y debe retirarse antes de confirmar el documento en Git.
+-->
+
+# participacion7 Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Calidad de código
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+El código respeta SOLID:
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- **SRP**: una clase, una razón de cambio. El cálculo no valida ni formatea.
+- **OCP**: agregar una nueva regla de redondeo no obliga a editar las clases existentes.
+- **LSP**: cualquier implementación de una interfaz puede sustituir a otra sin
+  comprobar su tipo.
+- **ISP**: interfaces pequeñas, sin métodos innecesarios.
+- **DIP**: presentation depende de abstracciones de domain, nunca de clases
+  concretas de data.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Arquitectura
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+- Capas: presentation, domain y data.
+- Dependencias: `presentation → domain ← data`.
+- Domain no puede importar Flutter.
+- `main.dart` es el único lugar donde se instancian implementaciones concretas.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### III. Seguridad
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+Nunca guardar secretos ni claves de API en el repositorio.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### IV. Calidad y pruebas
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Toda funcionalidad crítica debe tener pruebas.
+- Los criterios de aceptación deben convertirse en pruebas ejecutables.
+
+### V. Regla de la materia
+
+El estudiante debe poder explicar cada función generada: qué hace, por qué existe,
+qué recibe, qué devuelve y qué errores produce.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+El contenido normativo de esta constitución se limita a los cinco principios
+solicitados por el usuario. No se establecen otros principios ni reglas adicionales.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-10-01 | **Last Amended**: 2026-10-01
