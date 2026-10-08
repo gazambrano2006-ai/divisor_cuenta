@@ -14,8 +14,9 @@
 la funcionalidad crítica tenga pruebas y que los criterios de aceptación se
 conviertan en pruebas ejecutables.
 
-**Alcance de esta fase**: generar únicamente este documento. Ninguna tarea está
-ejecutada; la aplicación permanece sin implementar.
+**Ejecución solicitada**: `/speckit-implement`, el 2026-10-06, para implementar
+esta lista revisada, incluidas sus tareas de pruebas. Las casillas registran el
+trabajo realizado; la evidencia de verificación se documenta en [quickstart.md](quickstart.md).
 
 ## Formato y condiciones de ejecución
 
@@ -42,9 +43,9 @@ ejecutada; la aplicación permanece sin implementar.
 **Objetivo**: preparar estructura y dependencias sin crear otro proyecto ni
 repositorio.
 
-- [ ] T001 Verificar el SDK estable con `flutter --version` y preparar `lib/domain/`, `lib/data/` y `lib/presentation/` en el proyecto actual; conservar la restricción de versión del SDK en `pubspec.yaml` y las carpetas nativas, sin ejecutar `flutter create` ni inicializar Git.
-- [ ] T002 Retirar `cupertino_icons` y `flutter_lints` de `pubspec.yaml` y el include `package:flutter_lints/flutter.yaml` de `analysis_options.yaml`; conservar Flutter y `flutter_test` del SDK y el análisis de `lib/` y `test/`, sin agregar dependencias externas ni silenciar errores.
-- [ ] T003 Ejecutar `flutter pub get` desde la raíz de `pubspec.yaml`, actualizar `pubspec.lock` y verificar que las dependencias directas sean solo las previstas del SDK; no usar `flutter pub upgrade` para ampliar el alcance.
+- [X] T001 Verificar el SDK estable con `flutter --version` y preparar `lib/domain/`, `lib/data/` y `lib/presentation/` en el proyecto actual; conservar la restricción de versión del SDK en `pubspec.yaml` y las carpetas nativas, sin ejecutar `flutter create` ni inicializar Git.
+- [X] T002 Retirar `cupertino_icons` y `flutter_lints` de `pubspec.yaml` y el include `package:flutter_lints/flutter.yaml` de `analysis_options.yaml`; conservar Flutter y `flutter_test` del SDK y el análisis de `lib/` y `test/`, sin agregar dependencias externas ni silenciar errores.
+- [X] T003 Ejecutar `flutter pub get` desde la raíz de `pubspec.yaml`, actualizar `pubspec.lock` y verificar que las dependencias directas sean solo las previstas del SDK; no usar `flutter pub upgrade` para ampliar el alcance.
 
 **Punto de control**: estructura preparada y dependencias resueltas; no hay
 paquetes externos directos ni referencias de análisis a paquetes retirados.
@@ -54,12 +55,12 @@ paquetes externos directos ni referencias de análisis a paquetes retirados.
 **Objetivo**: definir los valores, contratos y validación que requieren todas las
 historias. Esta fase depende de T001–T003 y bloquea su integración.
 
-- [ ] T004 [P] Crear `Cuenta` inmutable en `lib/domain/cuenta.dart`, sin validación, cálculo ni formato en el constructor: `montoCoeficiente` (`BigInt`), "Cifras del monto sin punto; mayor o igual que cero."; `montoEscala` (`int`), "Cantidad de cifras decimales del monto; mayor o igual que cero."; `personas` (`BigInt`), "Número de personas; entero mayor o igual que uno."; `propinaCoeficiente` (`BigInt`), "Cifras del porcentaje sin punto; mayor o igual que cero."; `propinaEscala` (`int`), "Cantidad de cifras decimales del porcentaje; mayor o igual que cero.".
-- [ ] T005 [P] Crear `Resultado` inmutable en `lib/domain/resultado.dart` con `centavosPorPersona` (`BigInt`): "Importe individual final, no negativo, después de aplicar la estrategia."; conservar solo el valor numérico, sin texto ni errores de entrada.
-- [ ] T006 [P] Crear la interfaz abstracta `EstrategiaRedondeo` en `lib/domain/estrategia_redondeo.dart` con el único método `BigInt redondear(BigInt numerador, BigInt denominador)`; contrato: numerador no negativo, denominador positivo y salida en centavos no negativos, sin Flutter ni métodos adicionales.
-- [ ] T007 Definir únicamente los alias de función `ValidacionEntrada` y `DivisionCuenta` en `lib/domain/contratos_divisor.dart`: tres textos devuelven una `Cuenta` válida y, ante entradas inválidas, lanzan `ArgumentError` con `message` de tipo `String`; una `Cuenta` válida y una `EstrategiaRedondeo` devuelven `Resultado`; depende de T004–T006.
-- [ ] T008 Escribir pruebas de `ValidarEntrada` en `test/domain/validar_entrada_test.dart`: análisis decimal exacto con punto y espacios externos, conservación de cifras, una persona y monto cero válidos; monto vacío/no numérico/negativo/NaN/infinito → `Monto inválido`; personas cero/negativas → `Debe haber al menos una persona`; personas vacías/no numéricas/fraccionarias y propina vacía/no numérica/negativa/no finita → sus mensajes de contrato; comprobar `ArgumentError.message`, orden monto → personas → propina y ausencia de límites máximos arbitrarios.
-- [ ] T009 Implementar `ValidarEntrada.ejecutar` y sus ayudantes de análisis en `lib/domain/validar_entrada.dart` para hacer pasar T008: conservar coeficientes y escalas sin `double` ni redondeo previo; analizar personas como entero base diez; crear `Cuenta` solo tras validar los tres textos, con `Número de personas inválido` y `Propina inválida` para los errores adicionales; no importar Flutter ni paquetes externos.
+- [X] T004 [P] Crear `Cuenta` inmutable en `lib/domain/cuenta.dart`, sin validación, cálculo ni formato en el constructor: `montoCoeficiente` (`BigInt`), "Cifras del monto sin punto; mayor o igual que cero."; `montoEscala` (`int`), "Cantidad de cifras decimales del monto; mayor o igual que cero."; `personas` (`BigInt`), "Número de personas; entero mayor o igual que uno."; `propinaCoeficiente` (`BigInt`), "Cifras del porcentaje sin punto; mayor o igual que cero."; `propinaEscala` (`int`), "Cantidad de cifras decimales del porcentaje; mayor o igual que cero.".
+- [X] T005 [P] Crear `Resultado` inmutable en `lib/domain/resultado.dart` con `centavosPorPersona` (`BigInt`): "Importe individual final, no negativo, después de aplicar la estrategia."; conservar solo el valor numérico, sin texto ni errores de entrada.
+- [X] T006 [P] Crear la interfaz abstracta `EstrategiaRedondeo` en `lib/domain/estrategia_redondeo.dart` con el único método `BigInt redondear(BigInt numerador, BigInt denominador)`; contrato: numerador no negativo, denominador positivo y salida en centavos no negativos, sin Flutter ni métodos adicionales.
+- [X] T007 Definir únicamente los alias de función `ValidacionEntrada` y `DivisionCuenta` en `lib/domain/contratos_divisor.dart`: tres textos devuelven una `Cuenta` válida y, ante entradas inválidas, lanzan `ArgumentError` con `message` de tipo `String`; una `Cuenta` válida y una `EstrategiaRedondeo` devuelven `Resultado`; depende de T004–T006.
+- [X] T008 Escribir pruebas de `ValidarEntrada` en `test/domain/validar_entrada_test.dart`: análisis decimal exacto con punto y espacios externos, conservación de cifras, una persona y monto cero válidos; monto vacío/no numérico/negativo/NaN/infinito → `Monto inválido`; personas cero/negativas → `Debe haber al menos una persona`; personas vacías/no numéricas/fraccionarias y propina vacía/no numérica/negativa/no finita → sus mensajes de contrato; comprobar `ArgumentError.message`, orden monto → personas → propina y ausencia de límites máximos arbitrarios.
+- [X] T009 Implementar `ValidarEntrada.ejecutar` y sus ayudantes de análisis en `lib/domain/validar_entrada.dart` para hacer pasar T008: conservar coeficientes y escalas sin `double` ni redondeo previo; analizar personas como entero base diez; crear `Cuenta` solo tras validar los tres textos, con `Número de personas inválido` y `Propina inválida` para los errores adicionales; no importar Flutter ni paquetes externos.
 
 **Punto de control**: modelos y contratos estables; la validación protege al
 cálculo y cumple los mensajes obligatorios. Las pruebas de T008 deben pasar antes
@@ -77,21 +78,21 @@ No hay resultado inicial ni cálculo al editar; una persona y monto cero son vá
 
 ### Pruebas antes de la implementación de la historia
 
-- [ ] T010 [P] [US1] Crear `test/domain/calcular_division_test.dart` con valores esperados de CA-001, CA-002 y CA-005, propina decimal y división para una persona/monto cero; usar una estrategia de prueba para comprobar que `CalcularDivision` entrega la fracción sin redondeo intermedio y respeta los centavos devueltos, sin duplicar la fórmula del código en las expectativas.
-- [ ] T011 [P] [US1] Crear `test/data/redondeo_exacto_test.dart` para el contrato de fracción a centavos: `10/3 → 333`, `1005/1000 → 101`, cero y valor entero; comprobar centavo más cercano, empate superior y ausencia de redistribución de sobrantes.
-- [ ] T012 [P] [US1] Crear `test/presentation/formateador_moneda_test.dart` para `27.50`, `30.00`, `3.33`, `4.00`, `0.00`, una fracción de centavos con cero inicial y un importe grande sin notación científica; el formateador recibe centavos finales y no redondea.
-- [ ] T013 [P] [US1] Crear `test/presentation/divisor_controller_test.dart` con dependencias de prueba recibidas por constructor: invocación de validar → calcular → formatear, selección por clave y opciones obtenidas del registro; comprobar salida `({String? resultado, String? error})` válida con resultado no nulo y error nulo, sin depender de clases de data.
-- [ ] T014 [P] [US1] Sustituir, una vez autorizado, la prueba del contador en `test/widget_test.dart` por CA-001, CA-002 y CA-005 usando la composición de `lib/main.dart`; comprobar tres entradas, botón `Calcular`, ausencia inicial de resultado, cálculo solo al pulsar, pago por persona con dos cifras y casos de una persona/monto cero.
+- [X] T010 [P] [US1] Crear `test/domain/calcular_division_test.dart` con valores esperados de CA-001, CA-002 y CA-005, propina decimal y división para una persona/monto cero; usar una estrategia de prueba para comprobar que `CalcularDivision` entrega la fracción sin redondeo intermedio y respeta los centavos devueltos, sin duplicar la fórmula del código en las expectativas.
+- [X] T011 [P] [US1] Crear `test/data/redondeo_exacto_test.dart` para el contrato de fracción a centavos: `10/3 → 333`, `1005/1000 → 101`, cero y valor entero; comprobar centavo más cercano, empate superior y ausencia de redistribución de sobrantes.
+- [X] T012 [P] [US1] Crear `test/presentation/formateador_moneda_test.dart` para `27.50`, `30.00`, `3.33`, `4.00`, `0.00`, una fracción de centavos con cero inicial y un importe grande sin notación científica; el formateador recibe centavos finales y no redondea.
+- [X] T013 [P] [US1] Crear `test/presentation/divisor_controller_test.dart` con dependencias de prueba recibidas por constructor: invocación de validar → calcular → formatear, selección por clave y opciones obtenidas del registro; comprobar salida `({String? resultado, String? error})` válida con resultado no nulo y error nulo, sin depender de clases de data.
+- [X] T014 [P] [US1] Sustituir, una vez autorizado, la prueba del contador en `test/widget_test.dart` por CA-001, CA-002 y CA-005 usando la composición de `lib/main.dart`; comprobar tres entradas, botón `Calcular`, ausencia inicial de resultado, cálculo solo al pulsar, pago por persona con dos cifras y casos de una persona/monto cero.
 
 ### Implementación
 
-- [ ] T015 [P] [US1] Implementar `CalcularDivision.ejecutar` en `lib/domain/calcular_division.dart`: calcular la fracción exacta de `monto × (1 + propina/100) / personas` con los coeficientes y escalas de `Cuenta`, llamar al método de `EstrategiaRedondeo` y crear `Resultado`; no validar, formatear, convertir a `double` ni comprobar tipos concretos; depende de T010.
-- [ ] T016 [P] [US1] Implementar `RedondeoExacto` en `lib/data/redondeo_exacto.dart` mediante cociente entero y residuo de `100 × numerador / denominador`; incrementar el centavo cuando el doble del residuo sea mayor o igual que el denominador; cumplir T011 y las precondiciones comunes, sin formato ni validación de entradas.
-- [ ] T017 [P] [US1] Implementar `FormateadorMoneda.formatear` en `lib/presentation/formateador_moneda.dart` separando unidades y residuo de cien centavos, con punto y relleno de dos cifras; cumplir T012 sin redondear ni convertir a `double`.
-- [ ] T018 [US1] Implementar `DivisorController` en `lib/presentation/divisor_controller.dart` con `ValidacionEntrada`, `DivisionCuenta`, `FormateadorMoneda` y registro inmutable `Map<String, EstrategiaRedondeo>` recibidos por constructor; exponer sus opciones y orquestar el camino válido conforme a T013, sin construir colaboradores ni importar data; depende de T015–T017.
-- [ ] T019 [US1] Implementar `PantallaDivisor` en `lib/presentation/pantalla_divisor.dart` como `StatefulWidget` que recibe el controlador: campos `Monto total`, `Número de personas`, `Propina (%)`, selector derivado del registro y botón `Calcular`; conservar `String monto`, `String personas`, `String propina`, `String modo`, `String? resultado` y `String? error`, inicialmente sin salida; calcular fuera del callback de `setState` y aplicar juntos los campos de salida; depende de T018.
-- [ ] T020 [US1] Reemplazar el contador en `lib/main.dart` por la composición del primer incremento: construir validador, cálculo, `RedondeoExacto`, formateador, controlador y pantalla; pasar referencias a métodos con los contratos de domain y registrar `Exacto`; el registro se ampliará en US3 sin editar las clases existentes; depende de T019.
-- [ ] T021 [US1] Ejecutar `flutter test test/domain test/data test/presentation test/widget_test.dart` y verificar los criterios independientes de US1 en `test/widget_test.dart`; exigir CA-001, CA-002 y CA-005 correctos y pruebas unitarias verdes antes de continuar.
+- [X] T015 [P] [US1] Implementar `CalcularDivision.ejecutar` en `lib/domain/calcular_division.dart`: calcular la fracción exacta de `monto × (1 + propina/100) / personas` con los coeficientes y escalas de `Cuenta`, llamar al método de `EstrategiaRedondeo` y crear `Resultado`; no validar, formatear, convertir a `double` ni comprobar tipos concretos; depende de T010.
+- [X] T016 [P] [US1] Implementar `RedondeoExacto` en `lib/data/redondeo_exacto.dart` mediante cociente entero y residuo de `100 × numerador / denominador`; incrementar el centavo cuando el doble del residuo sea mayor o igual que el denominador; cumplir T011 y las precondiciones comunes, sin formato ni validación de entradas.
+- [X] T017 [P] [US1] Implementar `FormateadorMoneda.formatear` en `lib/presentation/formateador_moneda.dart` separando unidades y residuo de cien centavos, con punto y relleno de dos cifras; cumplir T012 sin redondear ni convertir a `double`.
+- [X] T018 [US1] Implementar `DivisorController` en `lib/presentation/divisor_controller.dart` con `ValidacionEntrada`, `DivisionCuenta`, `FormateadorMoneda` y registro inmutable `Map<String, EstrategiaRedondeo>` recibidos por constructor; exponer sus opciones y orquestar el camino válido conforme a T013, sin construir colaboradores ni importar data; depende de T015–T017.
+- [X] T019 [US1] Implementar `PantallaDivisor` en `lib/presentation/pantalla_divisor.dart` como `StatefulWidget` que recibe el controlador: campos `Monto total`, `Número de personas`, `Propina (%)`, selector derivado del registro y botón `Calcular`; conservar `String monto`, `String personas`, `String propina`, `String modo`, `String? resultado` y `String? error`, inicialmente sin salida; calcular fuera del callback de `setState` y aplicar juntos los campos de salida; depende de T018.
+- [X] T020 [US1] Reemplazar el contador en `lib/main.dart` por la composición del primer incremento: construir validador, cálculo, `RedondeoExacto`, formateador, controlador y pantalla; pasar referencias a métodos con los contratos de domain y registrar `Exacto`; el registro se ampliará en US3 sin editar las clases existentes; depende de T019.
+- [X] T021 [US1] Ejecutar `flutter test test/domain test/data test/presentation test/widget_test.dart` y verificar los criterios independientes de US1 en `test/widget_test.dart`; exigir CA-001, CA-002 y CA-005 correctos y pruebas unitarias verdes antes de continuar.
 
 **Punto de control**: el incremento de cálculo Exacto funciona. Todavía se deben
 completar US2–US4 para satisfacer toda la especificación.
@@ -108,14 +109,14 @@ válido. Corregir los datos permite recuperar el pago en la misma pantalla.
 
 ### Pruebas
 
-- [ ] T022 [P] [US2] Ampliar `test/presentation/divisor_controller_test.dart` para los errores de entrada de T008: salida con error y resultado nulo, textos exactos sin el prefijo de `ArgumentError`, sin llamar al cálculo ni al formateador tras validación fallida y recuperación con datos válidos en una llamada posterior.
-- [ ] T023 [P] [US2] Ampliar `test/widget_test.dart` con CA-003 y CA-004 antes y después de CA-001; comprobar desaparición de `27.50`, mensajes exactos y ausencia de cualquier resultado; cubrir también personas negativas/vacías/no numéricas/fraccionarias, monto vacío/negativo/no finito, propina inválida y corrección seguida de Calcular.
+- [X] T022 [P] [US2] Ampliar `test/presentation/divisor_controller_test.dart` para los errores de entrada de T008: salida con error y resultado nulo, textos exactos sin el prefijo de `ArgumentError`, sin llamar al cálculo ni al formateador tras validación fallida y recuperación con datos válidos en una llamada posterior.
+- [X] T023 [P] [US2] Ampliar `test/widget_test.dart` con CA-003 y CA-004 antes y después de CA-001; comprobar desaparición de `27.50`, mensajes exactos y ausencia de cualquier resultado; cubrir también personas negativas/vacías/no numéricas/fraccionarias, monto vacío/negativo/no finito, propina inválida y corrección seguida de Calcular.
 
 ### Implementación
 
-- [ ] T024 [P] [US2] Completar el manejo de error de entrada en `lib/presentation/divisor_controller.dart`: capturar solo los `ArgumentError` de la validación y entregar su mensaje y resultado nulo, sin ocultar errores de programación del cálculo o del registro; garantizar "un cálculo válido tiene solo resultado; uno inválido tiene solo error."; depende de T022.
-- [ ] T025 [P] [US2] Completar en `lib/presentation/pantalla_divisor.dart` la presentación excluyente de error y resultado: en cada cálculo inválido asignar resultado nulo, en cada válido error nulo, manteniendo editables los campos y la recuperación mediante Calcular; depende de T023 y del contrato ya estable del controlador de US1.
-- [ ] T026 [US2] Ejecutar las pruebas de `test/domain/validar_entrada_test.dart`, `test/presentation/divisor_controller_test.dart` y `test/widget_test.dart`; exigir CA-003/CA-004, recuperación y los casos válidos de US1 correctos; depende de T024 y T025.
+- [X] T024 [P] [US2] Completar el manejo de error de entrada en `lib/presentation/divisor_controller.dart`: capturar solo los `ArgumentError` de la validación y entregar su mensaje y resultado nulo, sin ocultar errores de programación del cálculo o del registro; garantizar "un cálculo válido tiene solo resultado; uno inválido tiene solo error."; depende de T022.
+- [X] T025 [P] [US2] Completar en `lib/presentation/pantalla_divisor.dart` la presentación excluyente de error y resultado: en cada cálculo inválido asignar resultado nulo, en cada válido error nulo, manteniendo editables los campos y la recuperación mediante Calcular; depende de T023 y del contrato ya estable del controlador de US1.
+- [X] T026 [US2] Ejecutar las pruebas de `test/domain/validar_entrada_test.dart`, `test/presentation/divisor_controller_test.dart` y `test/widget_test.dart`; exigir CA-003/CA-004, recuperación y los casos válidos de US1 correctos; depende de T024 y T025.
 
 **Punto de control**: error y pago nunca aparecen simultáneamente, y los casos
 inválidos no conservan resultados previos.
@@ -131,15 +132,15 @@ calcular en Exacto, Hacia arriba y Exacto produce `3.33 → 4.00 → 3.33`.
 
 ### Pruebas
 
-- [ ] T027 [P] [US3] Crear `test/data/redondeo_hacia_arriba_test.dart`: `10/3 → 400` centavos, `90/3 → 3000`, `3001/1000 → 400` y cero; comprobar techo del cociente original, entero que no aumenta y las mismas precondiciones/salida que Exacto.
-- [ ] T028 [P] [US3] Ampliar `test/presentation/divisor_controller_test.dart` para elegir dos estrategias por sus claves y sustituirlas por una implementación de prueba del mismo contrato; verificar delegación y opciones derivadas del registro sin comprobar tipos ni añadir un tercer modo a la aplicación.
-- [ ] T029 [P] [US3] Ampliar `test/widget_test.dart` con CA-006, alternancia Exacto → Hacia arriba → Exacto con pulsación del botón en cada paso, entero que no aumenta, cociente `3.001`, una persona y monto cero en Hacia arriba; cambiar solo el selector no debe recalcular.
+- [X] T027 [P] [US3] Crear `test/data/redondeo_hacia_arriba_test.dart`: `10/3 → 400` centavos, `90/3 → 3000`, `3001/1000 → 400` y cero; comprobar techo del cociente original, entero que no aumenta y las mismas precondiciones/salida que Exacto.
+- [X] T028 [P] [US3] Ampliar `test/presentation/divisor_controller_test.dart` para elegir dos estrategias por sus claves y sustituirlas por una implementación de prueba del mismo contrato; verificar delegación y opciones derivadas del registro sin comprobar tipos ni añadir un tercer modo a la aplicación.
+- [X] T029 [P] [US3] Ampliar `test/widget_test.dart` con CA-006, alternancia Exacto → Hacia arriba → Exacto con pulsación del botón en cada paso, entero que no aumenta, cociente `3.001`, una persona y monto cero en Hacia arriba; cambiar solo el selector no debe recalcular.
 
 ### Implementación
 
-- [ ] T030 [US3] Implementar `RedondeoHaciaArriba` en `lib/data/redondeo_hacia_arriba.dart`: obtener cociente entero y residuo de la fracción original, elevar solo cuando el residuo sea positivo y devolver el entero multiplicado por cien; cumplir T027 sin validar ni formatear.
-- [ ] T031 [US3] Construir y registrar `RedondeoHaciaArriba` con clave `Hacia arriba` en el mapa inmutable de `lib/main.dart`, manteniendo `Exacto`; no modificar `CalcularDivision`, `DivisorController`, `PantallaDivisor`, `FormateadorMoneda` ni la interfaz para agregar esta regla; depende de T030.
-- [ ] T032 [US3] Ejecutar `flutter test` sobre `test/domain/`, `test/data/`, `test/presentation/` y `test/widget_test.dart`; exigir CA-001 a CA-006 correctos, ambos modos sustituibles y alternancia sin regresiones; depende de T031.
+- [X] T030 [US3] Implementar `RedondeoHaciaArriba` en `lib/data/redondeo_hacia_arriba.dart`: obtener cociente entero y residuo de la fracción original, elevar solo cuando el residuo sea positivo y devolver el entero multiplicado por cien; cumplir T027 sin validar ni formatear.
+- [X] T031 [US3] Construir y registrar `RedondeoHaciaArriba` con clave `Hacia arriba` en el mapa inmutable de `lib/main.dart`, manteniendo `Exacto`; no modificar `CalcularDivision`, `DivisorController`, `PantallaDivisor`, `FormateadorMoneda` ni la interfaz para agregar esta regla; depende de T030.
+- [X] T032 [US3] Ejecutar `flutter test` sobre `test/domain/`, `test/data/`, `test/presentation/` y `test/widget_test.dart`; exigir CA-001 a CA-006 correctos, ambos modos sustituibles y alternancia sin regresiones; depende de T031.
 
 **Punto de control**: los dos modos funcionan y los seis escenarios originales
 están convertidos en pruebas ejecutables.
@@ -154,9 +155,9 @@ conexión y repetir CA-001 a CA-006 con las mismas salidas: `6 de 6` correctos.
 
 ### Pruebas y verificación
 
-- [ ] T033 [P] [US4] Crear `test/presentation/funcionamiento_sin_conexion_test.dart` con `flutter_test` del SDK: iniciar la aplicación mediante la composición de `lib/main.dart`, bloquear intentos HTTP con el arnés de pruebas del SDK y ejecutar CA-001 a CA-006 comprobando apertura, entrada, selección, resultados y errores; no permitir que la prueba use red real ni agregar paquetes de integración.
-- [ ] T034 [P] [US4] Auditar `lib/main.dart`, `lib/domain/`, `lib/data/`, `lib/presentation/` y `pubspec.yaml` para confirmar ausencia de clientes de red, sockets, peticiones, bases de datos, persistencia y credenciales; cualquier corrección se limita al código Dart de la funcionalidad, sin agregar servicios ni cambiar `android/` o `ios/`.
-- [ ] T035 [US4] Tras T033 y T034, ejecutar la prueba sin conexión, preparar una compilación con las herramientas del SDK y abrirla instalada en un dispositivo ya sin conexión; repetir CA-001 a CA-006, incluyendo inicio desde la aplicación cerrada, y registrar destino, casos y resultados `6 de 6` en `specs/001-dividir-cuenta/quickstart.md`; no depender de descargar o compilar después de desconectar ni de cargar una web desde un servidor remoto.
+- [X] T033 [P] [US4] Crear `test/presentation/funcionamiento_sin_conexion_test.dart` con `flutter_test` del SDK: iniciar la aplicación mediante la composición de `lib/main.dart`, bloquear intentos HTTP con el arnés de pruebas del SDK y ejecutar CA-001 a CA-006 comprobando apertura, entrada, selección, resultados y errores; no permitir que la prueba use red real ni agregar paquetes de integración.
+- [X] T034 [P] [US4] Auditar `lib/main.dart`, `lib/domain/`, `lib/data/`, `lib/presentation/` y `pubspec.yaml` para confirmar ausencia de clientes de red, sockets, peticiones, bases de datos, persistencia y credenciales; cualquier corrección se limita al código Dart de la funcionalidad, sin agregar servicios ni cambiar `android/` o `ios/`.
+- [X] T035 [US4] Tras T033 y T034, ejecutar la prueba sin conexión, preparar una compilación con las herramientas del SDK y abrirla instalada en un dispositivo ya sin conexión; repetir CA-001 a CA-006, incluyendo inicio desde la aplicación cerrada, y registrar destino, casos y resultados `6 de 6` en `specs/001-dividir-cuenta/quickstart.md`; no depender de descargar o compilar después de desconectar ni de cargar una web desde un servidor remoto.
 
 **Punto de control**: la prueba automatizada y la comprobación en dispositivo
 respaldan SC-004; la operación no depende de red ni almacenamiento.
@@ -166,15 +167,15 @@ respaldan SC-004; la operación no depende de red ni almacenamiento.
 **Objetivo**: comprobar la Constitución, la explicación de funciones y los
 comandos acordados sobre la implementación completa. Depende de US1–US4.
 
-- [ ] T036 Completar comentarios de explicación en las funciones necesarias de `lib/domain/`, `lib/data/`, `lib/presentation/` y `lib/main.dart`: qué hacen, por qué existen, entradas, salidas y errores; contrastar con `specs/001-dividir-cuenta/contracts/contratos-internos.md` para que el estudiante pueda explicarlas, sin introducir funciones adicionales.
-- [ ] T037 Revisar SOLID e imports de `lib/domain/`, `lib/data/`, `lib/presentation/` y `lib/main.dart`: domain solo Dart, `presentation → domain ← data`, servicios concretos construidos solo en main, estrategia con un método, cálculo sin validación/formato y registro extensible sin comprobaciones de tipo; confirmar que no se guardaron secretos y que `android/` e `ios/` no cambiaron.
-- [ ] T038 Formatear el código autorizado de `lib/` y `test/` con `dart format lib test` y verificar consistencia de null safety y nombres propios en español, conservando los nombres de APIs y overrides de Flutter; no ampliar el alcance a las carpetas nativas.
-- [ ] T039 Ejecutar desde la raíz de `pubspec.yaml` los comandos `flutter pub get`, `flutter run`, `flutter analyze` y `flutter test`; comprobar la pantalla completa, análisis sin errores, pruebas correctas y los indicadores SC-001 a SC-005 según `specs/001-dividir-cuenta/quickstart.md`, registrando resultados reales y cualquier limitación del entorno sin declarar verificaciones no realizadas.
+- [X] T036 Completar comentarios de explicación en las funciones necesarias de `lib/domain/`, `lib/data/`, `lib/presentation/` y `lib/main.dart`: qué hacen, por qué existen, entradas, salidas y errores; contrastar con `specs/001-dividir-cuenta/contracts/contratos-internos.md` para que el estudiante pueda explicarlas, sin introducir funciones adicionales.
+- [X] T037 Revisar SOLID e imports de `lib/domain/`, `lib/data/`, `lib/presentation/` y `lib/main.dart`: domain solo Dart, `presentation → domain ← data`, servicios concretos construidos solo en main, estrategia con un método, cálculo sin validación/formato y registro extensible sin comprobaciones de tipo; confirmar que no se guardaron secretos y que `android/` e `ios/` no cambiaron.
+- [X] T038 Formatear el código autorizado de `lib/` y `test/` con `dart format lib test` y verificar consistencia de null safety y nombres propios en español, conservando los nombres de APIs y overrides de Flutter; no ampliar el alcance a las carpetas nativas.
+- [X] T039 Ejecutar desde la raíz de `pubspec.yaml` los comandos `flutter pub get`, `flutter run`, `flutter analyze` y `flutter test`; comprobar la pantalla completa, análisis sin errores, pruebas correctas y los indicadores SC-001 a SC-005 según `specs/001-dividir-cuenta/quickstart.md`, registrando resultados reales y cualquier limitación del entorno sin declarar verificaciones no realizadas.
 
 **Criterio de finalización**: 39 tareas completadas con autorización aplicable,
 seis casos correctos, errores sin resultado, dos decimales, ambos modos y uso sin
-conexión. El estado actual de esta lista es pendiente, no una afirmación de
-pruebas ejecutadas.
+conexión. Cada casilla completada debe corresponder a trabajo realizado y
+verificación efectiva, según la evidencia de `quickstart.md`.
 
 ## Dependencias y orden de ejecución
 
@@ -272,5 +273,10 @@ Hacia arriba, recuperación y falta de red verifican reglas existentes.
 | **Total** | **39** | **T001–T039** |
 
 **Paralelismo**: 20 tareas llevan `[P]`, sujetas a las dependencias documentadas.
-**Formato**: todas las tareas usan casilla pendiente, ID consecutivo y rutas;
+**Formato**: todas las tareas usan casilla de estado, ID consecutivo y rutas;
 solo las tareas de historias incluyen etiqueta `[USn]`.
+
+
+## Phase 8: Convergence
+
+- [X] T040 Verificar la aplicación de `lib/main.dart` y `lib/presentation/pantalla_divisor.dart` en Chrome con `flutter run -d chrome`: ejecutar CA-001 a CA-006, comprobar los importes, ambos modos y los mensajes exactos sin resultado previo en los casos inválidos; registrar destino, comando y resultados reales en `specs/001-dividir-cuenta/quickstart.md`, manteniendo la funcionalidad existente, las dependencias del SDK y el código nativo intactos, per plan: Plataformas (verificación local en Windows o Chrome) y T039 (partial).

@@ -1,6 +1,6 @@
 # Contratos internos y responsabilidades
 
-Estos contratos describen la implementación futura. No contienen cuerpos de
+Estos contratos describen la implementación. No contienen cuerpos de
 servicios ni código de la aplicación. Referencias: [plan](../plan.md) y
 [modelo de datos](../data-model.md).
 
@@ -70,6 +70,7 @@ no aumenta.
 | Opciones de `DivisorController` | Expone las etiquetas del registro para que la pantalla pueda mostrar y seleccionar modos sin conocer implementaciones. | Registro inyectado. | Opciones de solo lectura. | Ninguno para un registro válido. |
 | `DivisorController.calcular` | Orquesta validar, seleccionar, calcular y formatear; convierte un error de entrada en salida visible. | Tres textos y clave del modo. | Record con solo `resultado` o solo `error` no nulo. | Captura los errores de entrada de validación y usa su `message` sin prefijos. Una clave ausente del registro es un error de programación de la composición. |
 | `main` | Construye y conecta las dependencias concretas y arranca Flutter. | Ningún argumento de usuario. | `void`; aplicación con `PantallaDivisor`. | No gestiona errores de entradas ni calcula cuentas. |
+| `crearAplicacion` en `main.dart` | Construye y conecta los colaboradores para reutilizar la composición en el arranque y las pruebas. | Ningún argumento. | `Widget` de la aplicación con `PantallaDivisor` y ambos modos registrados. | No valida datos ni produce errores de entrada; garantiza el registro requerido por el controlador. |
 
 El formateador obtiene la parte entera y el residuo de los centavos entre cien y
 rellena la parte decimal con ceros a dos posiciones. No convierte a `double`,
