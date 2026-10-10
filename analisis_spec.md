@@ -87,3 +87,31 @@ Cálculo:
 
 ```text
 % CÓMO = 0 / 42 × 100 = 0%
+
+## Análisis de la Constitution
+
+La Constitution también se revisó por separado para identificar qué reglas podían mantenerse y cuáles necesitaban adaptar su redacción al pasar de Flutter a React.
+
+| Regla de la Constitution | Clasificación | Justificación |
+|---|---|---|
+| SRP: una clase, una razón de cambio | Adaptada | En React se expresa como una función o módulo con una razón de cambio. |
+| OCP: agregar una regla no obliga a editar clases existentes | Adaptada | En React se habla de módulos en lugar de clases. |
+| LSP: una implementación puede sustituir a otra | Adaptada | La misma idea se mantiene, pero el contrato se expresa para las estrategias de JavaScript. |
+| ISP: interfaces pequeñas | Adaptada | El principio se mantiene, pero la redacción se ajusta al uso de funciones y contratos en JavaScript. |
+| DIP: presentation depende de abstracciones de domain | Adaptada | Se conserva el principio, adaptando la referencia a implementaciones concretas de JavaScript. |
+| Capas presentation, domain y data | Adaptada | La separación en tres capas se mantiene, pero en React se expresa con las rutas `src/presentation`, `src/domain` y `src/data`. |
+| Dependencia `presentation -> domain <- data` | Idéntica | La dirección de dependencias no cambia. |
+| Domain no puede importar Flutter | Adaptada | En React se cambia a que `src/domain` no importe React ni elementos del DOM. |
+| `main.dart` es el único punto de composición | Adaptada | En React esa responsabilidad pasa a `src/main.jsx`. |
+| No guardar secretos ni API keys | Idéntica | No depende de la tecnología utilizada. |
+| Toda funcionalidad crítica debe tener pruebas | Idéntica | Es una regla de calidad independiente del framework. |
+| Los criterios de aceptación deben convertirse en pruebas | Idéntica | Se mantiene igual en ambas tecnologías. |
+| El estudiante debe poder explicar cada función generada | Idéntica | Es una regla de la materia y no depende de Flutter o React. |
+
+### Resultado de la Constitution
+
+- Reglas idénticas: 5
+- Reglas adaptadas en redacción: 8
+- Reglas reemplazadas: 0
+
+La Constitution pudo reutilizarse en gran parte. Los principios se conservaron y los cambios fueron principalmente de redacción para reemplazar conceptos propios de Flutter por sus equivalentes en React.

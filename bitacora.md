@@ -7,6 +7,6 @@
 | Iteraciones con el agente | no registrado | 1 |
 | Líneas de código escritas a mano | no registrado | 16 |
 | Enunciados modificados en la spec | — | 0 |
-| Enunciados modificados en la Constitution | — | 7 |
+Enunciados modificados en la Constitution | — | 8 |
 | Líneas modificadas en el plan | — | 140 |
 | Casos de aceptación que pasan (0–6) | 6 | 6 |

@@ -1,18 +1,4 @@
-﻿<!--
-Informe de impacto de sincronización (material temporal de revisión)
-- Versión: plantilla sin versión → 1.0.0; adopción inicial.
-- Principios definidos: Calidad de código; Arquitectura; Seguridad;
-  Calidad y pruebas; Regla de la materia.
-- Secciones añadidas: contenido de los cinco principios solicitados.
-- Secciones omitidas: restricciones adicionales y flujo de desarrollo de la
-  plantilla, porque el usuario no ha definido otros principios.
-- Gobernanza: no se añaden políticas ni obligaciones distintas de las solicitadas.
-- Archivos relacionados: plantillas y código de la aplicación sin cambios.
-- Pendientes: ninguno.
-Este informe es temporal y debe retirarse antes de confirmar el documento en Git.
--->
-
-# participacion7 Constitution
+﻿# participacion7 Constitution
 
 ## Core Principles
 
