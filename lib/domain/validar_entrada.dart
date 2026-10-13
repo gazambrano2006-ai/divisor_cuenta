@@ -24,6 +24,11 @@ class ValidarEntrada {
     final personasAnalizadas = _analizarPersonas(personas);
     final propinaAnalizada = _analizarDecimal(propina, 'Propina inválida');
 
+    if (propinaAnalizada.coeficiente >
+        BigInt.from(100) * BigInt.from(10).pow(propinaAnalizada.escala)) {
+      throw ArgumentError('La propina no puede superar el 100%');
+    }
+
     return Cuenta(
       montoCoeficiente: montoAnalizado.coeficiente,
       montoEscala: montoAnalizado.escala,
