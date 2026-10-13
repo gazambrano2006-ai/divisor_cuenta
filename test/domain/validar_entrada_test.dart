@@ -60,11 +60,11 @@ void main() {
       expect(cuenta.propinaEscala, 6);
     });
 
-    test('no impone límites máximos ni precisión de double', () {
+    test('conserva precisión en números grandes', () {
       final cuenta = validador.ejecutar(
         monto: '123456789012345678901234567890.12345678901234567890',
         personas: '123456789012345678901234567890',
-        propina: '987654321098765432109876543210.00000000000000000001',
+        propina: '99.12345678901234567890',
       );
 
       expect(
@@ -75,7 +75,7 @@ void main() {
       expect(cuenta.personas, BigInt.parse('123456789012345678901234567890'));
       expect(
         cuenta.propinaCoeficiente,
-        BigInt.parse('98765432109876543210987654321000000000000000000001'),
+        BigInt.parse('9912345678901234567890'),
       );
       expect(cuenta.propinaEscala, 20);
     });
