@@ -61,6 +61,26 @@ void main() {
     });
   }
 
+  test('propina de 150% devuelve el mensaje exacto del límite', () {
+    expect(
+      () => validador.ejecutar(monto: '100', personas: '4', propina: '150'),
+      throwsA(
+        isA<ArgumentError>().having(
+          (error) => error.message,
+          'mensaje exacto',
+          equals('La propina no puede superar el 100%'),
+        ),
+      ),
+    );
+  });
+
+  test('propina de 100% se permite sin error', () {
+    expect(
+      () => validador.ejecutar(monto: '100', personas: '4', propina: '100'),
+      returnsNormally,
+    );
+  });
+
   test('LSP: el mismo cálculo admite Exacto y Hacia arriba', () {
     final cuenta = validador.ejecutar(
       monto: '10.00',
