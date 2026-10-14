@@ -12,13 +12,13 @@ class CalcularDivision {
   /// Recibe una [cuenta] validada y una [estrategia] sustituible. Devuelve los
   /// centavos finales en un [Resultado], sin errores con entradas válidas.
   Resultado ejecutar(Cuenta cuenta, EstrategiaRedondeo estrategia) {
-    final escalaMonto = BigInt.from(10).pow(cuenta.montoEscala);
-    final escalaPropina = BigInt.from(10).pow(cuenta.propinaEscala);
+    final factorEscalaMonto = BigInt.from(10).pow(cuenta.montoEscala);
+    final factorEscalaPropina = BigInt.from(10).pow(cuenta.propinaEscala);
     final cien = BigInt.from(100);
     final numerador =
         cuenta.montoCoeficiente *
-        (cien * escalaPropina + cuenta.propinaCoeficiente);
-    final denominador = escalaMonto * cien * escalaPropina * cuenta.personas;
+        (cien * factorEscalaPropina + cuenta.propinaCoeficiente);
+    final denominador = factorEscalaMonto * cien * factorEscalaPropina * cuenta.personas;
 
     return Resultado(
       centavosPorPersona: estrategia.redondear(numerador, denominador),
