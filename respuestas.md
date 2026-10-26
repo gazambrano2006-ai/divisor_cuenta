@@ -1,55 +1,125 @@
-# Respuestas — Deber 3
+# Deber 4 — De TDD a CI/CD
 
-## 1. Rojo antes de verde
+## 1. Workflow de CI
 
-**¿Qué mensaje de error mostró `flutter test` en la Parte 2? ¿Por qué era importante ver esa prueba fallar antes de escribir el código?**
+El archivo `.github/workflows/ci.yml` quedó así:
 
-Al ejecutar `flutter test`, falló la prueba de la propina del 150 %. Se esperaba que el programa devolviera el mensaje **"La propina no puede superar el 100%"**, pero en lugar de eso aceptó la entrada y devolvió una cuenta.
+```yaml
+name: Flutter CI
 
-Era importante ver ese error antes de modificar el código porque así comprobé que la prueba realmente detectaba el problema. Después agregué la validación y la prueba pasó. De esta manera pude seguir el ciclo TDD: primero rojo y después verde.
+on:
+  push:
+    branches: [main]
+  pull_request:
 
-## 2. Linter vs. IA
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --debug
 
-**¿Qué aviso mostró `flutter analyze` y qué code smell señaló la IA? ¿Por qué el linter no encontró ese code smell?**
+  entrega:
+    needs: build
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter build apk --debug
+      - uses: actions/upload-artifact@v7
+        with:
+          name: divisor-cuenta-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+```
 
-Al ejecutar `flutter analyze`, aparecieron dos avisos que provoqué temporalmente para comprobar cómo funciona el linter:
+- **Analyze:** revisa el código y detecta problemas mediante el analizador de Dart.
+- **Test:** ejecuta las pruebas automáticas para comprobar el comportamiento de la aplicación.
+- **Build:** compila la aplicación y comprueba que puede generar un APK de Android.
 
-- `unused_local_variable`: había una variable declarada que no se utilizaba.
-- `avoid_print`: había un `print('hola')` dentro del código.
+El job `entrega` depende de `build` y solamente se ejecuta después de un push a `main`, si las verificaciones anteriores terminaron correctamente.
 
-Después eliminé esas líneas y el análisis terminó con `No issues found!`.
+![Pipeline CI aprobado](evidencias/parte1_ci_verde.png)
 
-Por otro lado, Codex encontró un code smell en `lib/domain/calcular_division.dart`. Las variables `escalaMonto` y `escalaPropina` tenían nombres poco claros, porque representaban factores calculados con potencias de 10 y podían confundirse con la cantidad de decimales.
+## 2. Fallo detectado por el pipeline
 
-El linter no detectó ese problema porque los nombres eran válidos y el código funcionaba. Sin embargo, para una persona que lea el código, esos nombres podían ser confusos. El linter detecta reglas específicas, mientras que la IA también puede señalar problemas de claridad y mantenimiento.
+Para comprobar el funcionamiento de CI cambié intencionalmente el resultado esperado del primer escenario en `test/casos_de_prueba.dart`, de `27.50` a `27.00`.
 
-## 3. Mi refactorización
+El pipeline falló en `flutter test`. En el registro, la línea 153 identificó la prueba `test/division_test.dart: 1. reparto normal (failed)`. Después, la línea 170 mostró `Error: 142 tests passed, 1 failed`, y la línea 171 indicó que el proceso terminó con código de salida 1.
 
-**¿Qué code smell elegiste, qué cambió en el código y cómo sabes que la aplicación sigue haciendo exactamente lo mismo?**
+Esto demostró que GitHub Actions detectaba una diferencia entre el resultado esperado y el que realmente calculaba el programa.
 
-Elegí el code smell de los nombres ambiguos en `lib/domain/calcular_division.dart`.
+![Error del pipeline](evidencias/parte3_rojo.png)
 
-Cambié dos nombres:
+Después restauré el valor `27.50` en el mismo Pull Request. Las 143 pruebas volvieron a pasar y el pipeline terminó correctamente.
 
-- `escalaMonto` por `factorEscalaMonto`.
-- `escalaPropina` por `factorEscalaPropina`.
+![Pipeline corregido](evidencias/parte3_verde_otra_vez.png)
 
-Hice este cambio porque las variables representan factores de escala, no directamente la cantidad de decimales. Los nombres nuevos ayudan a entender mejor la fórmula.
+## 3. Diferencias entre CI, Continuous Delivery y Continuous Deployment
 
-No cambié ninguna operación, condición ni cálculo. Solamente cambiaron los nombres de las variables.
+- **Continuous Integration (CI):** ejecuta automáticamente verificaciones cuando se envían cambios, para detectar problemas antes de unirlos al proyecto principal.
+- **Continuous Delivery:** además de verificar, deja una versión de la aplicación preparada y disponible para su entrega.
+- **Continuous Deployment:** publica automáticamente los cambios en producción cuando pasan las verificaciones, sin requerir una aprobación manual adicional.
 
-Después ejecuté `flutter test` y las **143 pruebas siguieron pasando**. También revisé el `git diff` y comprobé que únicamente se habían cambiado esos nombres. Por eso puedo decir que la refactorización mejoró la claridad del código sin modificar su comportamiento.
+En este deber implementé CI y una forma básica de Continuous Delivery. GitHub ejecuta el análisis, las pruebas y la compilación. Después de un push a `main`, el job `entrega` genera un APK y lo publica como artifact descargable.
 
-## 4. Coverage
+No implementé Continuous Deployment porque la aplicación no se publica automáticamente para usuarios finales. Además, el APK generado es de depuración.
 
-**¿Qué archivo de `lib/` tiene el porcentaje más bajo? ¿Significa eso que ese archivo tiene errores?**
+## 4. Protección de la rama main
 
-El archivo con menor cobertura fue `lib/main.dart`, con **81,8 %** de sus líneas cubiertas.
+Configuré GitHub para exigir un Pull Request y que el check `build` pase antes de permitir la fusión.
 
-Como `flutter test --coverage` fallaba al ejecutar todas las pruebas juntas por un problema con el servicio de Dart, ejecuté las pruebas por grupos y después combiné los archivos de cobertura. Con ese procedimiento obtuve una cobertura global de **97,8 %** de las líneas registradas.
+Cuando cambié intencionalmente la prueba, GitHub mostró `All checks have failed` y deshabilitó el botón `Merge pull request`.
 
-Que `main.dart` tenga una cobertura menor no significa necesariamente que tenga errores. Solo indica que algunas líneas de ese archivo no se ejecutaron durante las pruebas.
+Esto evita que se fusionen a `main` cambios cuyas verificaciones obligatorias están fallando. No garantiza que el programa esté libre de todos los errores, pero reduce el riesgo de incorporar cambios que rompan pruebas existentes.
 
-Esto puede pasar porque `main.dart` contiene código relacionado con el inicio de la aplicación, que no siempre se ejecuta cuando hacemos pruebas unitarias.
+![Merge bloqueado](evidencias/parte3_merge_bloqueado.png)
 
-Por eso, considero que el coverage sirve para identificar qué partes del código se probaron, pero un porcentaje alto no garantiza que el programa esté libre de errores.
+La configuración también quedó documentada:
+
+![Protección de main](evidencias/parte2_proteccion.png)
+
+## 5. Revisión crítica del agente
+
+Le pedí a Codex que revisara los riesgos de seguridad y fragilidad del archivo `ci.yml`, sin modificarlo.
+
+El agente señaló que las acciones utilizan etiquetas que pueden cambiar, que no declaramos permisos explícitos para `GITHUB_TOKEN`, que Flutter estable puede actualizarse y que `upload-artifact` podría no fallar cuando no encuentre el APK.
+
+**La sugerencia que acepté como mejora recomendable** fue agregar `if-no-files-found: error`, porque permitiría detectar una entrega incompleta en lugar de dejar únicamente una advertencia. No la apliqué en este deber, ya que la actividad pedía una revisión crítica y el pipeline actual había generado correctamente el APK.
+
+**La sugerencia que decidí no aplicar en este ejercicio** fue fijar una versión exacta de Flutter. Reconozco que mejoraría la reproducibilidad, pero preferí conservar la versión estable solicitada y no agregar cambios innecesarios.
+
+También considero útil aplicar permisos mínimos y revisar las versiones de las acciones en un proyecto más grande.
+
+## 6. ¿Qué garantiza realmente un CI verde?
+
+Un CI verde significa que las verificaciones configuradas terminaron correctamente en el entorno donde se ejecutaron. En nuestro caso, indica que el análisis no reportó problemas, las pruebas pasaron y la aplicación pudo compilarse.
+
+Sin embargo, no garantiza que el programa funcione perfectamente en todas las situaciones.
+
+Por ejemplo, la aplicación podría tener un problema visual en un celular con una pantalla muy pequeña y aun así pasar todas las pruebas, si ninguna comprueba ese tamaño de pantalla.
+
+Por eso las pruebas automáticas son importantes, pero no sustituyen completamente las revisiones y pruebas manuales.
+
+## 7. ¿Qué detectó el pipeline que yo no había visto?
+
+El pipeline detectó automáticamente que el primer escenario tenía un resultado esperado incorrecto. Aunque provoqué ese error intencionalmente, GitHub logró identificar la prueba afectada, marcar el workflow como fallido y bloquear la fusión a `main`.
+
+También comprobé que, después de corregir el valor en el mismo Pull Request, las verificaciones volvieron a pasar sin modificar la lógica de la aplicación.
+
+No apareció otro error inesperado durante las ejecuciones correctas. Sí aparecieron avisos informativos relacionados con el entorno Ubuntu, pero no impidieron la compilación.
+
+## Evidencia de entrega del APK
+
+Después de fusionar el Pull Request de la entrega automática, GitHub ejecutó los jobs `build` y `entrega` correctamente y publicó el artifact `divisor-cuenta-apk`, de aproximadamente 66,7 MB.
+
+![APK generado como artifact](evidencias/parte4_artifact.png)
