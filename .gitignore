@@ -46,3 +46,10 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Python, entornos virtuales y configuracion local
+.pytest_cache/
+__pycache__/
+.venv/
+venv/
+.env
