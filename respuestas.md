@@ -1,55 +1,57 @@
-# Respuestas — Deber 3
+# Respuestas — Deber 5: MCP Detective
 
-## 1. Rojo antes de verde
+Materia: Programación Asistida de Aplicaciones.
 
-**¿Qué mensaje de error mostró `flutter test` en la Parte 2? ¿Por qué era importante ver esa prueba fallar antes de escribir el código?**
+En este trabajo se utilizó Codex como agente para investigar los casos mediante las herramientas del servidor `mcp-detective`. Durante la investigación, los eventos se obtuvieron exclusivamente por MCP, sin leer directamente `casos.json`.
 
-Al ejecutar `flutter test`, falló la prueba de la propina del 150 %. Se esperaba que el programa devolviera el mensaje **"La propina no puede superar el 100%"**, pero en lugar de eso aceptó la entrada y devolvió una cuenta.
+## 1. Funciones del LLM, Codex, el cliente y el servidor MCP
 
-Era importante ver ese error antes de modificar el código porque así comprobé que la prueba realmente detectaba el problema. Después agregué la validación y la prueba pasó. De esta manera pude seguir el ciclo TDD: primero rojo y después verde.
+El LLM interpreta las instrucciones del usuario, selecciona las herramientas que necesita y propone sus argumentos. Después analiza los resultados y redacta una explicación. El modelo debe distinguir entre lo que muestran los registros y las conclusiones que estos permiten.
 
-## 2. Linter vs. IA
+Codex actúa como host o harness, es decir, como el entorno que coordina el trabajo del modelo. Administra las herramientas, los permisos y las llamadas, y entrega sus resultados al LLM. El cliente MCP es el componente del host que mantiene la conexión con el servidor, descubre sus herramientas, envía las solicitudes y recibe las respuestas. Estos roles corresponden a la [arquitectura de MCP](https://modelcontextprotocol.io/docs/learn/architecture).
 
-**¿Qué aviso mostró `flutter analyze` y qué code smell señaló la IA? ¿Por qué el linter no encontró ese code smell?**
+El servidor MCP es el programa Python que implementa `listar_casos`, `consultar_eventos` y `registrar_alerta`. Allí se consultan los datos, se validan los argumentos y se registran las alertas.
 
-Al ejecutar `flutter analyze`, aparecieron dos avisos que provoqué temporalmente para comprobar cómo funciona el linter:
+El código Python lo ejecuta realmente el intérprete del entorno virtual, en el proceso del servidor. En esta conexión por `stdio`, Codex inicia ese proceso y el cliente intercambia mensajes por la entrada y salida estándar. El LLM solicita acciones; el intérprete Python ejecuta las funciones del servidor. La [documentación del SDK](https://py.sdk.modelcontextprotocol.io/run/) describe esta forma de ejecución.
 
-- `unused_local_variable`: había una variable declarada que no se utilizaba.
-- `avoid_print`: había un `print('hola')` dentro del código.
+## 2. Por qué INC-003 es sospechoso
 
-Después eliminé esas líneas y el análisis terminó con `No issues found!`.
+Los eventos consultados muestran cuatro intentos fallidos entre las 03:00 y las 03:03, seguidos de un acceso exitoso a las 03:04. Todos corresponden a la cuenta `admin` y a la IP `192.0.2.50`.
 
-Por otro lado, Codex encontró un code smell en `lib/domain/calcular_division.dart`. Las variables `escalaMonto` y `escalaPropina` tenían nombres poco claros, porque representaban factores calculados con potencias de 10 y podían confundirse con la cantidad de decimales.
+La secuencia resulta sospechosa porque hubo varios fallos antes de conseguir acceso a una cuenta administrativa. Por eso se registró una alerta de nivel `alto`, para dar prioridad a la revisión de la legitimidad del acceso.
 
-El linter no detectó ese problema porque los nombres eran válidos y el código funcionaba. Sin embargo, para una persona que lea el código, esos nombres podían ser confusos. El linter detecta reglas específicas, mientras que la IA también puede señalar problemas de claridad y mantenimiento.
+Sin embargo, los registros no identifican a la persona que realizó los intentos ni demuestran que careciera de autorización. También podrían corresponder a una persona autorizada que ingresó mal sus credenciales. El acceso exitoso confirma una autenticación, pero no demuestra una intrusión.
 
-## 3. Mi refactorización
+## 3. Rechazo de INC-999 y de los parámetros inválidos
 
-**¿Qué code smell elegiste, qué cambió en el código y cómo sabes que la aplicación sigue haciendo exactamente lo mismo?**
+El servidor rechaza `INC-999` porque ese identificador no existe. La consulta MCP devolvió el mensaje `No existe el caso 'INC-999'.` La lógica interna genera un `ValueError` y la herramienta lo convierte en un `ToolError` para comunicarlo por MCP. El cliente recibe el error y el modelo lo explica sin inventar eventos.
 
-Elegí el code smell de los nombres ambiguos en `lib/domain/calcular_division.dart`.
+El servidor también valida los argumentos de las alertas: el caso debe existir, el nivel debe ser exactamente `bajo`, `medio` o `alto`, y el motivo debe contener texto. Por ejemplo, rechaza el nivel `critico` y un motivo formado solo por espacios. Además, impide registrar una segunda alerta para el mismo caso mientras la primera permanece en la memoria del proceso.
 
-Cambié dos nombres:
+Estas validaciones deben hacerse en el servidor porque el modelo puede equivocarse al generar los argumentos. Otro cliente también podría enviar solicitudes incorrectas directamente. Las instrucciones al LLM ayudan a orientar su comportamiento, pero el servidor debe aplicar las reglas de manera consistente antes de aceptar una operación.
 
-- `escalaMonto` por `factorEscalaMonto`.
-- `escalaPropina` por `factorEscalaPropina`.
+## 4. Instalación, Inspector, conexión y pruebas
 
-Hice este cambio porque las variables representan factores de escala, no directamente la cantidad de decimales. Los nombres nuevos ayudan a entender mejor la fórmula.
+**SDK de MCP.** El SDK de MCP para Python quedó instalado en el entorno virtual `C:\Users\Gabriel\.venvs\mcp-detective`; la versión verificada fue `2.3.0`. La instalación con las utilidades de línea de comandos se puede reproducir con el siguiente comando de PowerShell, usando ese entorno ya creado, según la [documentación de instalación](https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/get-started/installation.md):
 
-No cambié ninguna operación, condición ni cálculo. Solamente cambiaron los nombres de las variables.
+```powershell
+& "$env:USERPROFILE\.venvs\mcp-detective\Scripts\python.exe" -m pip install "mcp[cli]"
+```
 
-Después ejecuté `flutter test` y las **143 pruebas siguieron pasando**. También revisé el `git diff` y comprobé que únicamente se habían cambiado esos nombres. Por eso puedo decir que la refactorización mejoró la claridad del código sin modificar su comportamiento.
+**MCP Inspector.** Se utilizó como cliente de prueba para descubrir las tres herramientas y comprobar sus respuestas y errores sin intervención del LLM. Una forma de reproducir la conexión por `stdio`, desde la raíz de `participacion7`, es la siguiente, de acuerdo con la [documentación de Inspector](https://modelcontextprotocol.io/docs/tools/inspector):
 
-## 4. Coverage
+```powershell
+$pythonMcp = "$env:USERPROFILE\.venvs\mcp-detective\Scripts\python.exe"
+$serverMcp = (Resolve-Path ".\mcp-detective\server.py").Path
+npx.cmd -y @modelcontextprotocol/inspector $pythonMcp $serverMcp
+```
 
-**¿Qué archivo de `lib/` tiene el porcentaje más bajo? ¿Significa eso que ese archivo tiene errores?**
+**Conexión a Codex.** El servidor se registró como `mcp-detective` en `C:\Users\Gabriel\.codex\config.toml`. El campo `command` apunta al Python del entorno virtual y `args` contiene la ruta absoluta de `participacion7\mcp-detective\server.py`. Esta configuración permite iniciar el servidor local por `stdio`, como explica la [documentación oficial de Codex](https://developers.openai.com/codex/mcp). La conexión se comprobó mediante las llamadas reales a las herramientas durante la investigación.
 
-El archivo con menor cobertura fue `lib/main.dart`, con **81,8 %** de sus líneas cubiertas.
+**Pruebas con pytest.** Desde la raíz del proyecto se ejecutó:
 
-Como `flutter test --coverage` fallaba al ejecutar todas las pruebas juntas por un problema con el servicio de Dart, ejecuté las pruebas por grupos y después combiné los archivos de cobertura. Con ese procedimiento obtuve una cobertura global de **97,8 %** de las líneas registradas.
+```powershell
+& "$env:USERPROFILE\.venvs\mcp-detective\Scripts\python.exe" -m pytest mcp-detective -q
+```
 
-Que `main.dart` tenga una cobertura menor no significa necesariamente que tenga errores. Solo indica que algunas líneas de ese archivo no se ejecutaron durante las pruebas.
-
-Esto puede pasar porque `main.dart` contiene código relacionado con el inicio de la aplicación, que no siempre se ejecuta cuando hacemos pruebas unitarias.
-
-Por eso, considero que el coverage sirve para identificar qué partes del código se probaron, pero un porcentaje alto no garantiza que el programa esté libre de errores.
+La evidencia `evidencias/pytest.png` muestra el resultado `9 passed in 1.07s`. Se comprobaron el listado de casos, el error por caso inexistente, los eventos de INC-002, una alerta válida de INC-003, tres variantes de alerta duplicada, un nivel no permitido y un motivo con solo espacios. Son siete funciones de prueba, pero la prueba de duplicados tiene tres variantes, por lo que pytest ejecuta nueve casos en total.

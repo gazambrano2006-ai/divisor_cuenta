@@ -1,0 +1,409 @@
+Deber 5: MCP Detective - Extracto de registros reales de Codex
+
+Este archivo es un extracto textual de ejecuciones reales registradas por Codex.
+No es una captura de la interfaz y no se reconstruyo a partir de respuestas narrativas.
+No se repitieron las llamadas MCP para obtener esta evidencia.
+
+Archivo de origen: C:\Users\Gabriel\.codex\sessions\2026\11\03\rollout-2026-11-03T23-11-10-01a1a4c0-ef37-7e63-8229-e78b3a2a6a86.jsonl
+Sesion de origen: 01a1a4c0-ef37-7e63-8229-e78b3a2a6a86
+Servidor seleccionado: mcp-detective
+Cantidad de ejecuciones verificadas: 6
+Marcas de tiempo: originales del registro, en UTC (Z).
+
+Criterio: solo entradas event_msg / mcp_tool_call_end del servidor y casos solicitados.
+Cada evento contiene invocation (herramienta y argumentos) y result (respuesta) bajo su call_id MCP.
+La llamada exec y su salida se vincularon por un segundo call_id, distinto del identificador MCP.
+La correspondencia con el evento MCP se verifico por turno, posicion y coincidencia exacta de argumentos y resultado.
+Se conservan todos los valores del evento original; solo se agrega sangria al JSON para facilitar su lectura.
+No se incluyen mensajes de conversacion, credenciales ni datos de otras sesiones.
+
+==============================================================================
+1. listar_casos
+Linea del evento MCP en el archivo de origen: 26
+SHA-256 de la linea original (incluye su salto de linea): 080eb1ab937b77669adf83c31ba077619bf12872213d365b7d17c1730d36adbf
+call_id de exec: call_275ecf3bbd724077885aa0e823a73758
+Referencia exec: llamada en linea 24; salida en linea 27.
+Evento original:
+{
+  "timestamp": "2026-11-04T04:11:22.470Z",
+  "type": "event_msg",
+  "payload": {
+    "type": "mcp_tool_call_end",
+    "call_id": "exec-89d96568-3d45-4be3-845c-6e6f512001a9",
+    "turn_id": "01a1a4c0-f75f-7a72-b8b0-5a2affc73c32",
+    "invocation": {
+      "server": "mcp-detective",
+      "tool": "listar_casos",
+      "arguments": {}
+    },
+    "duration": {
+      "secs": 0,
+      "nanos": 5774900
+    },
+    "result": {
+      "Ok": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"caso_id\": \"INC-001\",\n  \"sistema\": \"portal_acceso\",\n  \"cantidad_eventos\": 2\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"caso_id\": \"INC-002\",\n  \"sistema\": \"portal_acceso\",\n  \"cantidad_eventos\": 6\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"caso_id\": \"INC-003\",\n  \"sistema\": \"panel_administracion\",\n  \"cantidad_eventos\": 5\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": [
+            {
+              "caso_id": "INC-001",
+              "sistema": "portal_acceso",
+              "cantidad_eventos": 2
+            },
+            {
+              "caso_id": "INC-002",
+              "sistema": "portal_acceso",
+              "cantidad_eventos": 6
+            },
+            {
+              "caso_id": "INC-003",
+              "sistema": "panel_administracion",
+              "cantidad_eventos": 5
+            }
+          ]
+        },
+        "isError": false
+      }
+    }
+  }
+}
+
+==============================================================================
+2. consultar_eventos / INC-001
+Linea del evento MCP en el archivo de origen: 31
+SHA-256 de la linea original (incluye su salto de linea): 338488f7aa5b6358c9a1425e3c5ea95b3c19c55fd6eddad772265fb14c3e034f
+call_id de exec: call_5af7201e7e0340a5bbc89ef469c19cec
+Referencia exec: llamada en linea 29; salida en linea 34.
+Evento original:
+{
+  "timestamp": "2026-11-04T04:11:32.002Z",
+  "type": "event_msg",
+  "payload": {
+    "type": "mcp_tool_call_end",
+    "call_id": "exec-31059718-2d30-4a35-9bb7-05d7326f2ed9",
+    "turn_id": "01a1a4c0-f75f-7a72-b8b0-5a2affc73c32",
+    "invocation": {
+      "server": "mcp-detective",
+      "tool": "consultar_eventos",
+      "arguments": {
+        "caso_id": "INC-001"
+      }
+    },
+    "duration": {
+      "secs": 0,
+      "nanos": 4273000
+    },
+    "result": {
+      "Ok": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"08:41\",\n  \"usuario\": \"ana\",\n  \"ip\": \"198.51.100.10\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"08:42\",\n  \"usuario\": \"ana\",\n  \"ip\": \"198.51.100.10\",\n  \"evento\": \"LOGIN_SUCCESS\"\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": [
+            {
+              "hora": "08:41",
+              "usuario": "ana",
+              "ip": "198.51.100.10",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "08:42",
+              "usuario": "ana",
+              "ip": "198.51.100.10",
+              "evento": "LOGIN_SUCCESS"
+            }
+          ]
+        },
+        "isError": false
+      }
+    }
+  }
+}
+
+==============================================================================
+3. consultar_eventos / INC-002
+Linea del evento MCP en el archivo de origen: 32
+SHA-256 de la linea original (incluye su salto de linea): e3d54e6f1a3f2351c47f9c0b7cba35e09629854a4600e200085fd6ebd5b113a0
+call_id de exec: call_5af7201e7e0340a5bbc89ef469c19cec
+Referencia exec: llamada en linea 29; salida en linea 34.
+Evento original:
+{
+  "timestamp": "2026-11-04T04:11:34.964Z",
+  "type": "event_msg",
+  "payload": {
+    "type": "mcp_tool_call_end",
+    "call_id": "exec-ff722d3f-c2b8-4cfa-a5f3-5e6466aa9d4c",
+    "turn_id": "01a1a4c0-f75f-7a72-b8b0-5a2affc73c32",
+    "invocation": {
+      "server": "mcp-detective",
+      "tool": "consultar_eventos",
+      "arguments": {
+        "caso_id": "INC-002"
+      }
+    },
+    "duration": {
+      "secs": 0,
+      "nanos": 5254700
+    },
+    "result": {
+      "Ok": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"02:10\",\n  \"usuario\": \"admin\",\n  \"ip\": \"203.0.113.25\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"02:11\",\n  \"usuario\": \"admin\",\n  \"ip\": \"203.0.113.25\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"02:12\",\n  \"usuario\": \"admin\",\n  \"ip\": \"203.0.113.25\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"02:13\",\n  \"usuario\": \"admin\",\n  \"ip\": \"203.0.113.25\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"02:14\",\n  \"usuario\": \"admin\",\n  \"ip\": \"203.0.113.25\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"02:15\",\n  \"usuario\": \"admin\",\n  \"ip\": \"203.0.113.25\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": [
+            {
+              "hora": "02:10",
+              "usuario": "admin",
+              "ip": "203.0.113.25",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "02:11",
+              "usuario": "admin",
+              "ip": "203.0.113.25",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "02:12",
+              "usuario": "admin",
+              "ip": "203.0.113.25",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "02:13",
+              "usuario": "admin",
+              "ip": "203.0.113.25",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "02:14",
+              "usuario": "admin",
+              "ip": "203.0.113.25",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "02:15",
+              "usuario": "admin",
+              "ip": "203.0.113.25",
+              "evento": "LOGIN_FAILED"
+            }
+          ]
+        },
+        "isError": false
+      }
+    }
+  }
+}
+
+==============================================================================
+4. consultar_eventos / INC-003
+Linea del evento MCP en el archivo de origen: 33
+SHA-256 de la linea original (incluye su salto de linea): 5158b2030654d75bbc623d8cd7027e42bb0691c13327dbad06a01b56e70b6915
+call_id de exec: call_5af7201e7e0340a5bbc89ef469c19cec
+Referencia exec: llamada en linea 29; salida en linea 34.
+Evento original:
+{
+  "timestamp": "2026-11-04T04:11:38.076Z",
+  "type": "event_msg",
+  "payload": {
+    "type": "mcp_tool_call_end",
+    "call_id": "exec-1ec5f403-4091-4fb1-b8c1-c173b42dd068",
+    "turn_id": "01a1a4c0-f75f-7a72-b8b0-5a2affc73c32",
+    "invocation": {
+      "server": "mcp-detective",
+      "tool": "consultar_eventos",
+      "arguments": {
+        "caso_id": "INC-003"
+      }
+    },
+    "duration": {
+      "secs": 0,
+      "nanos": 3722500
+    },
+    "result": {
+      "Ok": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"03:00\",\n  \"usuario\": \"admin\",\n  \"ip\": \"192.0.2.50\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"03:01\",\n  \"usuario\": \"admin\",\n  \"ip\": \"192.0.2.50\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"03:02\",\n  \"usuario\": \"admin\",\n  \"ip\": \"192.0.2.50\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"03:03\",\n  \"usuario\": \"admin\",\n  \"ip\": \"192.0.2.50\",\n  \"evento\": \"LOGIN_FAILED\"\n}"
+          },
+          {
+            "type": "text",
+            "text": "{\n  \"hora\": \"03:04\",\n  \"usuario\": \"admin\",\n  \"ip\": \"192.0.2.50\",\n  \"evento\": \"LOGIN_SUCCESS\"\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": [
+            {
+              "hora": "03:00",
+              "usuario": "admin",
+              "ip": "192.0.2.50",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "03:01",
+              "usuario": "admin",
+              "ip": "192.0.2.50",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "03:02",
+              "usuario": "admin",
+              "ip": "192.0.2.50",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "03:03",
+              "usuario": "admin",
+              "ip": "192.0.2.50",
+              "evento": "LOGIN_FAILED"
+            },
+            {
+              "hora": "03:04",
+              "usuario": "admin",
+              "ip": "192.0.2.50",
+              "evento": "LOGIN_SUCCESS"
+            }
+          ]
+        },
+        "isError": false
+      }
+    }
+  }
+}
+
+==============================================================================
+5. registrar_alerta / INC-003
+Linea del evento MCP en el archivo de origen: 64
+SHA-256 de la linea original (incluye su salto de linea): 134587bbd6e104c940597e49f7fcb1f903ba9b845948fc4999e6dbc15bd8671d
+call_id de exec: call_6992dd0b570b4c1d9241d5112df21253
+Referencia exec: llamada en linea 62; salida en linea 65.
+Evento original:
+{
+  "timestamp": "2026-11-04T04:15:05.888Z",
+  "type": "event_msg",
+  "payload": {
+    "type": "mcp_tool_call_end",
+    "call_id": "exec-d1852637-edc1-443f-884b-3e1d3ce8e490",
+    "turn_id": "01a1a4c4-5e34-7361-91b1-2d9ff955c5f1",
+    "invocation": {
+      "server": "mcp-detective",
+      "tool": "registrar_alerta",
+      "arguments": {
+        "caso_id": "INC-003",
+        "motivo": "Cuatro intentos LOGIN_FAILED entre las 03:00 y las 03:03, seguidos de un LOGIN_SUCCESS a las 03:04 para la cuenta admin, todos desde la IP 192.0.2.50. La secuencia y el carácter administrativo de la cuenta justifican una revisión prioritaria para verificar la legitimidad del acceso. Los registros no demuestran una intrusión.",
+        "nivel": "alto"
+      }
+    },
+    "duration": {
+      "secs": 0,
+      "nanos": 8031000
+    },
+    "result": {
+      "Ok": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"caso_id\": \"INC-003\",\n  \"nivel\": \"alto\",\n  \"motivo\": \"Cuatro intentos LOGIN_FAILED entre las 03:00 y las 03:03, seguidos de un LOGIN_SUCCESS a las 03:04 para la cuenta admin, todos desde la IP 192.0.2.50. La secuencia y el carácter administrativo de la cuenta justifican una revisión prioritaria para verificar la legitimidad del acceso. Los registros no demuestran una intrusión.\",\n  \"estado\": \"registrada\"\n}"
+          }
+        ],
+        "isError": false
+      }
+    }
+  }
+}
+
+==============================================================================
+6. consultar_eventos / INC-999
+Linea del evento MCP en el archivo de origen: 83
+SHA-256 de la linea original (incluye su salto de linea): 389dd8815b8d0a15711dd239a9ec666fdfc4da5310df949c8870d2a28fa39c19
+call_id de exec: call_3ed07027a3214d48ba62ac1e7e4b074e
+Referencia exec: llamada en linea 81; salida en linea 84.
+Evento original:
+{
+  "timestamp": "2026-11-04T04:20:02.023Z",
+  "type": "event_msg",
+  "payload": {
+    "type": "mcp_tool_call_end",
+    "call_id": "exec-6b346919-0d62-4d20-bdf9-3d878edc598f",
+    "turn_id": "01a1a4c8-f32c-7d60-9d1d-53a6ae52ea29",
+    "invocation": {
+      "server": "mcp-detective",
+      "tool": "consultar_eventos",
+      "arguments": {
+        "caso_id": "INC-999"
+      }
+    },
+    "duration": {
+      "secs": 0,
+      "nanos": 26356000
+    },
+    "result": {
+      "Ok": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool consultar_eventos: No existe el caso 'INC-999'."
+          }
+        ],
+        "isError": true
+      }
+    }
+  }
+}
