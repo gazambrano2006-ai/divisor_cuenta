@@ -53,3 +53,31 @@ Que `main.dart` tenga una cobertura menor no significa necesariamente que tenga 
 Esto puede pasar porque `main.dart` contiene código relacionado con el inicio de la aplicación, que no siempre se ejecuta cuando hacemos pruebas unitarias.
 
 Por eso, considero que el coverage sirve para identificar qué partes del código se probaron, pero un porcentaje alto no garantiza que el programa esté libre de errores.
+
+---
+
+# Respuestas — Participación Cyber Detective
+
+## 1. Skill, plugin, comando, hook y MCP
+
+`incident-investigator` es un skill porque reúne instrucciones reutilizables para una tarea concreta. Su `SKILL.md` explica cuándo investigar y cómo conservar la evidencia; `references/detection-rules.md` define los umbrales, las ventanas de tiempo y la protección de tokens. Así puedo repetir el procedimiento sin escribir todas las instrucciones en cada consulta.
+
+Entiendo las diferencias así:
+
+| Concepto | Función |
+|---|---|
+| Skill | Enseña al agente un procedimiento mediante instrucciones y recursos de apoyo. |
+| Plugin | Empaqueta capacidades para distribuirlas e instalarlas juntas; puede incluir uno o varios skills y herramientas. |
+| Comando | Permite iniciar manualmente una acción o un flujo predefinido. |
+| Hook | Ejecuta una acción cuando ocurre un evento definido, según lo que admita la herramienta anfitriona. |
+| MCP | Es un protocolo para conectar al agente con herramientas y recursos expuestos por un servidor. |
+
+Para distribuir un Plugin Detective empaquetaría el skill, sus reglas y un manifiesto con nombre, versión y descripción. También podría añadir un lector de CSV que conserve filas físicas y oculte secretos, un comando para iniciar la revisión y un hook para comprobar la salida antes de guardarla. Un servidor MCP sería opcional si necesitara consultar otra fuente; para este CSV local no hace falta. Estos componentes serían propuestas, no capacidades ya construidas.
+
+## 2. Uso conceptual de Ralph Loop
+
+Usaría Ralph Loop como un ciclo de **revisar, corregir y verificar**, con un máximo de **tres iteraciones** sobre un borrador. En cada pasada comprobaría las citas contra el CSV original, recalcularía los conteos y las ventanas inclusivas, separaría los éxitos posteriores y revisaría los falsos positivos, las limitaciones y la redacción de tokens. Corregiría solamente el borrador y repetiría la misma comprobación.
+
+Mi criterio de parada sería una lista verificable: todas las filas citadas existen y coinciden con el original salvo la ocultación del token; cada alerta cumple su regla; los conteos e intervalos son correctos; no hay valores completos de tokens ni afirmaciones sin evidencia. Si todo pasa antes de la tercera iteración, terminaría ahí. Si después de la tercera quedan problemas, pararía e indicaría cuáles siguen pendientes, sin declarar que el análisis está validado.
+
+Si faltara una respuesta o un registro de activación, lo marcaría como no recuperado o no verificado. El ciclo no serviría para inventar evidencia ni para reescribir las respuestas originales de la comparación. Esta es una propuesta conceptual: no instalé Ralph Loop ni construí un plugin.

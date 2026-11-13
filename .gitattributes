@@ -1,0 +1,2 @@
+# Conservar los bytes y finales CRLF del CSV sintetico original.
+logs_sinteticos.csv -text whitespace=cr-at-eol
