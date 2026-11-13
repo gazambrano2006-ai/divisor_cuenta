@@ -1,0 +1,56 @@
+VERSION REDACTADA PARA PUBLICACION - INVESTIGACION SIN SKILL
+
+Procede de la respuesta autentica y de la transcripcion conservada, segun el caso.
+Se sustituyeron rutas personales por referencias relativas al proyecto y se eliminaron espacios finales en lineas vacias.
+El original se conserva en un respaldo privado fuera del repositorio.
+Esta version publicada no se presenta como un registro integro.
+SHA-256 del archivo original antes de redactar: 45A0FCCE5A1486ACED951A11663160D352D8EBC13287EA99A842EC872749EF42
+Procedencia y alcance: evidencias/README.md.
+
+--- CONTENIDO CON RUTAS REDACTADAS ---
+
+Revisaré el CSV sin modificar archivos ni usar Internet. Separaré los incidentes sustentados de la actividad normal y citaré las filas originales, ocultando cualquier token.
+```
+• Ran Get-Location; rg --files -g AGENTS.md -g logs_sinteticos.csv -g '*README*'
+  └ cyber-control-sin-skill
+
+
+• Ran $taskPath = Get-Location; while ($null -ne $taskPath) { $candidatePath = Join-Path $taskPath 'A…
+  └ (no output)
+• Ran Get-Item -LiteralPath logs_sinteticos.csv | Select-Object Length,LastWriteTime; Get-Content -Li…
+  └ timestamp,ip,user,event,result,detail
+
+
+• Started `/root/revisar_autenticacion`
+• Ran @' …
+  └ L93: 2026-11-05T02:29:00-05:00,192.0.2.10,luisa,login,success,ordinary login
+    L94: 2026-11-05T02:29:00-05:00,192.0.2.11,luisa,login,success,ordinary login
+    REGISTROS_DATOS=93
+• Started `/root/revisar_senales`
+• Completed `/root/revisar_senales`
+• Completed `/root/revisar_autenticacion`
+• Ran @' …
+  └ {"ip": "203.0.113.89", "filas": [67, 68, 70, 71, 73, 74], "registros": 6, "usuarios": ["ana", "ca…
+    {"ip": "192.0.2.25", "filas": [38, 39, 41, 42], "registros": 4, "usuarios": ["maria"], "resultado…
+    {"ip": "192.0.2.200", "filas": [78, 80, 81, 82, 83, 84], "registros": 6, "usuarios": ["healthbot"…
+
+```
+
+El CSV sustenta **cuatro hallazgos de seguridad**, con distintos grados de certeza. Revisé sus **93 registros**; las filas citadas cuentan el encabezado como fila 1. Todos los horarios corresponden al **5 de noviembre de 2026, UTC−05:00**.
+
+1. **Cambio de privilegios sin aprobación registrada.** A las 01:49, `guest`, desde `203.0.113.42`, recibe `access,denied,resource=/admin` (fila 57 (logs_sinteticos.csv:57)). Un minuto después, la misma combinación registra `role_change,success,role=user->admin; approved=false` (fila 59 (logs_sinteticos.csv:59)). **Justifica investigar una elevación no aprobada.** No demuestra cómo ocurrió ni acceso posterior exitoso a `/admin`.
+2. **Probable fuerza bruta contra `admin`, seguida de acceso sospechoso.** Desde `198.51.100.77` aparecen **8 registros de fallo** por `incorrect password` entre 01:14 y 01:18: filas **17, 19, 20, 22, 23, 25, 26 y 27**. A las 01:19 aparece `admin,login,success,login after multiple failures` (fila 28 (logs_sinteticos.csv:28)). La secuencia merece investigación, pero **no confirma que el acceso pertenezca a un atacante**. Además, los pares 19–20, 22–23 y 25–26 son idénticos: podrían ser intentos repetidos o duplicación del registro. Incluso deduplicándolos quedan cinco fallos y un éxito.
+3. **Exposición de un token en el log.** A las 01:27, `api_service`, desde `192.0.2.44`, registra `debug,warning,token=[OCULTO]; debug output` (fila 33 (logs_sinteticos.csv:33), valor redactado). **La inclusión del token en el registro es observable**; su vigencia, permisos y posible uso por terceros no están demostrados.
+4. **Intentos contra múltiples cuentas, compatibles con password spraying.** `203.0.113.89` produce seis fallos entre 02:01 y 02:03: `ana`, `carlos`, `luisa`, `diego`, `maria` y `sofia`, en filas **67, 68, 70, 71, 73 y 74** (inicio (logs_sinteticos.csv:67), final (logs_sinteticos.csv:74)). El patrón es sospechoso, pero **no permite confirmar una contraseña común**. No aparece un acceso exitoso desde esa IP.
+
+La actividad siguiente tiene una explicación normal sustentada por el archivo:
+
+| Evidencia original                                                                                                                                                               | Interpretación                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `maria`, `192.0.2.25`: tres fallos `mistyped password` en filas **38, 39 y 41**, seguidos de éxito `legitimate user` en fila 42 (logs_sinteticos.csv:42).                        | Compatible con errores de escritura; no basta para declarar fuerza bruta. |
+| `healthbot`, `192.0.2.200`: seis eventos `healthcheck,success,scheduled monitoring`, uno por minuto entre 02:10 y 02:15, filas **78 y 80–84** (inicio (logs_sinteticos.csv:78)). | Monitoreo programado; la repetición es esperable.                         |
+| Fallo y éxito de `carlos` desde la misma IP y minuto, filas **51 y 53**, ambos `ordinary login` (éxito (logs_sinteticos.csv:53)).                                                | Un reintento aislado no demuestra ataque.                                 |
+
+Hay **65 registros `ordinary login`: 54 éxitos y 11 fallos**. Su etiqueta aporta contexto, pero no garantiza legitimidad. Tampoco hay evidencia que conecte los cuatro hallazgos en una misma campaña.
+
+No modifiqué archivos ni utilicé Internet; el token permanece oculto.

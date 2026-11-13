@@ -1,0 +1,44 @@
+PRUEBA B — ACTIVACIÓN CONTEXTUAL
+
+Versión publicada: extracto redactado, no registro íntegro.
+Los originales se conservan fuera del repositorio. Se omiten rutas personales,
+identificadores privados de sesión/turno/llamada y mensajes internos ajenos a la
+prueba. Las operaciones, sus resultados y sus números de línea se cotejaron con
+el JSONL original; esta edición no vuelve a ejecutar la investigación.
+
+Fuente identificada públicamente como sesion_B.jsonl.
+SHA-256 del original:
+b976d6a20e8691ac38b43b49fc364007dc5451d6fdff3ffdd2ca1d9fc83975fc
+72 líneas físicas JSONL, numeradas desde 1. Los alias no son nombres originales.
+Fecha de la ejecución: 12 de noviembre de 2026, inicio 13:30:26 UTC−05:00.
+
+Solicitud contextual real, L14 (fragmentos del mensaje del usuario):
+«Revisa los registros de autenticación del archivo `logs_sinteticos.csv`.»
+«¿Ves intentos sospechosos, cambios no aprobados o posibles secretos expuestos?»
+«Identifica las alertas justificadas y cita las filas originales que respaldan cada una.»
+El usuario no invocó el skill por nombre en esta solicitud.
+
+Operaciones y resultados reales, proyectados con sus líneas originales:
+
+1. L18, custom_tool_call de exec, ejecuta:
+   Get-Content -LiteralPath '.agents/skills/incident-investigator/SKILL.md'
+   L20, salida asociada a esa llamada: exit_code = 0.
+   Fragmento del contenido devuelto: name: incident-investigator
+
+2. L22, custom_tool_call de exec, ejecuta:
+   Get-Content -Encoding UTF8 -LiteralPath '.agents/skills/incident-investigator/references/detection-rules.md'
+   L24, salida asociada a esa llamada: i = 0, status = fulfilled,
+   value.exit_code = 0.
+   Fragmento del contenido devuelto: # Reglas de detección
+
+3. L56 → L58 conserva una nueva lectura de detection-rules.md y su salida
+   exit_code = 0. L72 registra la finalización del turno original.
+
+Conclusión: ACTIVACIÓN CONFIRMADA de incident-investigator en esta prueba.
+La evidencia decisiva son las lecturas exitosas del skill y de sus reglas,
+realizadas antes del análisis. La mención del skill en la respuesta del asistente
+solo es corroboración; la mera presencia en el catálogo no demostraría su uso.
+
+Alcance: este extracto permite revisar las operaciones pertinentes y cotejarlas
+localmente mediante las líneas y la huella del original conservado. Omite el
+resto del registro por privacidad y no equivale a publicar todo el JSONL.

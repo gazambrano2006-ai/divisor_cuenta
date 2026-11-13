@@ -1,0 +1,107 @@
+VERSION REDACTADA PARA PUBLICACION - INVESTIGACION CON SKILL
+
+Procede de la respuesta autentica y de la transcripcion conservada, segun el caso.
+Se sustituyeron rutas personales por referencias relativas al proyecto.
+El original se conserva en un respaldo privado fuera del repositorio.
+Esta version publicada no se presenta como un registro integro.
+SHA-256 del archivo original antes de redactar: 5BCED5E76600DEB94D0B3B8F7FF2EB14203835659FB7FBB933D94AF7C31D1000
+Procedencia y alcance: evidencias/README.md.
+
+--- CONTENIDO CON RUTAS REDACTADAS ---
+
+Identifiqué **cuatro alertas justificadas**. Los registros sustentan los patrones siguientes, aunque no permiten confirmar por sí solos una intrusión ni atribuir autoría.
+
+Analicé los **93 registros** de [logs_sinteticos.csv](logs_sinteticos.csv:1), correspondientes al **5 de noviembre de 2026, 01:01–02:29, UTC−05:00**. En las citas, el número a la izquierda indica la **fila física original**, contando el encabezado como fila 1.
+
+**1. Fuerza bruta probable — severidad orientativa alta.**
+
+**R1:** exige ≥6 `login/failed` de una misma IP contra el mismo usuario en ≤5 minutos. Hay **8 fallos en 4 minutos**, entre 01:14 y 01:18, desde **198.51.100.77** contra **admin**.
+
+[Filas originales de los fallos](logs_sinteticos.csv:17):
+
+```text
+17 | 2026-11-05T01:14:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+19 | 2026-11-05T01:15:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+20 | 2026-11-05T01:15:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+22 | 2026-11-05T01:16:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+23 | 2026-11-05T01:16:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+25 | 2026-11-05T01:17:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+26 | 2026-11-05T01:17:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+27 | 2026-11-05T01:18:00-05:00,198.51.100.77,admin,login,failed,incorrect password
+```
+
+**Éxito posterior, evaluado por separado:** misma IP y usuario a las **01:19**, un minuto después del último fallo y dentro de la ventana inclusiva **[01:18, 01:23]**:
+
+```text
+28 | 2026-11-05T01:19:00-05:00,198.51.100.77,admin,login,success,login after multiple failures
+```
+
+La severidad se debe a la cuenta `admin` y al éxito posterior. **Limitación:** ese éxito no demuestra que un atacante accediera; faltan datos de sesión y acciones posteriores para confirmarlo.
+
+**2. Password spraying probable — severidad orientativa media.**
+
+**R2:** exige fallos desde una IP contra ≥5 usuarios distintos en ≤5 minutos. **203.0.113.89** acumula **6 usuarios distintos en 2 minutos**, entre **02:01 y 02:03**.
+
+[Filas originales](logs_sinteticos.csv:67):
+
+```text
+67 | 2026-11-05T02:01:00-05:00,203.0.113.89,ana,login,failed,incorrect password
+68 | 2026-11-05T02:01:00-05:00,203.0.113.89,carlos,login,failed,incorrect password
+70 | 2026-11-05T02:02:00-05:00,203.0.113.89,luisa,login,failed,incorrect password
+71 | 2026-11-05T02:02:00-05:00,203.0.113.89,diego,login,failed,incorrect password
+73 | 2026-11-05T02:03:00-05:00,203.0.113.89,maria,login,failed,incorrect password
+74 | 2026-11-05T02:03:00-05:00,203.0.113.89,sofia,login,failed,incorrect password
+```
+
+La amplitud de cuentas justifica la alerta. **Limitación:** no se registran contraseñas para comprobar que se reutilizó una misma; tampoco se observa un login exitoso desde esta IP en el CSV.
+
+**3. Token potencialmente expuesto — severidad orientativa media.**
+
+**R3:** presencia literal de `token=` en `detail`. Ocurre a las **01:27**, para **api_service**, desde **192.0.2.44**, en un evento `debug/warning`.
+
+[Fila original, con el valor oculto](logs_sinteticos.csv:33):
+
+```text
+33 | 2026-11-05T01:27:00-05:00,192.0.2.44,api_service,debug,warning,token=[REDACTED]
+```
+
+La alerta corresponde a la posible inclusión de una credencial en logs. **Limitación:** no demuestra que el token sea válido, que alguien lo haya utilizado ni quién podía leer el registro.
+
+**4. Cambio de rol no aprobado — severidad orientativa alta.**
+
+**R4:** `role_change/success` con `approved=false` explícito. A las **01:50**, el usuario **guest**, desde **203.0.113.42**, registra un cambio de `user` a `admin`.
+
+[Fila original](logs_sinteticos.csv:59):
+
+```text
+59 | 2026-11-05T01:50:00-05:00,203.0.113.42,guest,role_change,success,role=user->admin; approved=false
+```
+
+La severidad se debe al privilegio administrativo concedido con aprobación explícitamente falsa. Como contexto, un minuto antes aparece:
+
+```text
+57 | 2026-11-05T01:49:00-05:00,203.0.113.42,guest,access,denied,resource=/admin
+```
+
+**Limitación:** la coincidencia de IP y usuario no acredita una misma sesión ni permite identificar el mecanismo o autor del cambio. El acceso denegado aporta contexto, pero no constituye otra alerta bajo estas reglas.
+
+**Actividad compatible con uso normal y falsos positivos evitados:**
+
+- **Tres errores de contraseña de `maria`:** desde `192.0.2.25`, seguidos de un éxito. No alcanzan R1 y afectan a un solo usuario, por lo que tampoco cumplen R2:
+
+  ```text
+  38 | 2026-11-05T01:35:00-05:00,192.0.2.25,maria,login,failed,mistyped password
+  39 | 2026-11-05T01:36:00-05:00,192.0.2.25,maria,login,failed,mistyped password
+  41 | 2026-11-05T01:37:00-05:00,192.0.2.25,maria,login,failed,mistyped password
+  42 | 2026-11-05T01:38:00-05:00,192.0.2.25,maria,login,success,legitimate user
+  ```
+
+- **Monitoreo programado:** filas **78, 80–84**, de `192.0.2.200/healthbot`, contienen seis `healthcheck/success` entre **02:10 y 02:15**. Por ejemplo:
+
+  ```text
+  78 | 2026-11-05T02:10:00-05:00,192.0.2.200,healthbot,healthcheck,success,scheduled monitoring
+  ```
+
+  Son comprobaciones de salud, excluidas de R1/R2 por R5. Los demás fallos de login tampoco forman grupos adicionales que alcancen los umbrales.
+
+El CSV usa UTF-8 y comas; `timestamp`, `ip`, `user`, `event`, `result` y `detail` proporcionan los campos necesarios, con la aprobación dentro de `detail`. No encontré campos vacíos, fechas inválidas, líneas vacías ni registros multilínea; **no omití registros**. Conservé eventos con timestamps iguales y evalué ventanas inclusivas. Las conclusiones se limitan a esta captura sintética. **No modifiqué archivos ni utilicé Internet.**

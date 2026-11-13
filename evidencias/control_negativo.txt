@@ -1,0 +1,72 @@
+PRUEBA C — CONTROL NEGATIVO
+
+Versión publicada: extracto redactado, no registro íntegro.
+Los originales se conservan fuera del repositorio. Se omiten rutas personales,
+identificadores privados y mensajes internos ajenos a la prueba. Se mantienen
+operaciones verificadas, líneas originales y el resultado real del conteo.
+Las proyecciones siguientes no son nuevas ejecuciones ni JSONL literales completos.
+
+Fuentes identificadas públicamente con alias:
+- sesion_C.jsonl: 56 líneas físicas JSONL, SHA-256
+  70ca8238606e621d88e11719a103320aad04d551c914dacd89edf322b3c76745
+- sesion_C_hijo.jsonl: 49 líneas físicas JSONL, SHA-256
+  6311b3c1ea4a995b7df9551d2b42447e38461888e9464461015884ec9fda189a
+Los alias no son nombres originales. Las líneas se numeran desde 1.
+Fecha de la ejecución principal: 12 de noviembre de 2026, inicio 13:35:17 UTC−05:00.
+
+Solicitud real en sesion_C.jsonl, L14:
+«Muéstrame cuántos eventos hay por hora en `logs_sinteticos.csv`.
+
+Necesito únicamente un conteo descriptivo, en una tabla con la hora y la cantidad de eventos.
+
+No investigues incidentes, no clasifiques amenazas ni realices un análisis de seguridad.
+
+No modifiques archivos ni consultes Internet.»
+
+Inventario de las llamadas del turno principal, verificado en el original:
+- L18 → L20, exec: lectura del SKILL.md general de Spreadsheets y búsqueda de
+  logs_sinteticos.csv y AGENTS.md. Se omite la ruta personal de instalación.
+- L25 → L27, exec: lectura de AGENTS.md, cabecera del CSV y documentación de
+  Spreadsheets. Se omiten rutas personales de instalación.
+- L30 → L33, spawn_agent: crea el subagente de verificación del conteo.
+- L36 → L38, exec: Import-Csv para marcas de tiempo y total, e inventario de
+  node_repl.
+- L46 → L49, exec: node_repl.js lee el CSV con fs.readFile y agrupa por hora.
+  L48 conserva el resultado efectivo de la llamada subyacente.
+
+Resultado real en L48, fragmento textual sin metadatos de la herramienta:
+{
+  conteos: { '01:00': 63, '02:00': 30 },
+  total: 93,
+  fechas: [ '2026-11-05' ]
+}
+
+Respuesta final real en L53:
+| Hora | Cantidad de eventos |
+|---|---:|
+| 01:00–01:59 | 63 |
+| 02:00–02:59 | 30 |
+
+Verificación del subagente en sesion_C_hijo.jsonl:
+- L1 vincula el hijo con la sesión principal; se omiten los valores privados.
+- L2–29 son contexto heredado. El turno propio comienza en L34.
+- L41 → L43 conserva su única llamada propia: Import-Csv y Group-Object,
+  con resultados 63 y 30. L46 contiene su respuesta y L49 la finalización.
+
+Comprobación específica de incident-investigator:
+Se inspeccionaron los argumentos y resultados conservados del principal y su
+subagente, separando contexto heredado de operaciones propias. No hay llamadas
+de lectura de incident-investigator/SKILL.md ni de sus reglas. La cadena
+detection-rules.md no aparece en ninguno de esos dos registros completos.
+Las apariciones de incident-investigator se limitan al catálogo de habilidades
+y al estado de contexto: L5 y L9 del principal; L6 y L10 del hijo. Indican
+disponibilidad, no activación. Sí se leyó otro skill general, Spreadsheets,
+como consta en el inventario; el control negativo se refiere específicamente
+a incident-investigator.
+
+Conclusión: AUSENCIA DE ACTIVACIÓN VERIFICABLE de incident-investigator en
+esta ejecución observable. La respuesta fue únicamente la tabla descriptiva.
+Los turnos conservan su finalización y las llamadas examinadas tienen resultados.
+Algunas salidas de documentación general están truncadas; sus argumentos completos
+permiten identificar los archivos consultados. La conclusión se limita a los
+registros disponibles y no pretende demostrar un estado interno no observable.

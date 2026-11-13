@@ -1,0 +1,56 @@
+PRUEBA A — ACTIVACIÓN EXPLÍCITA
+
+Versión publicada: extracto redactado, no registro íntegro.
+Los originales se conservan fuera del repositorio. Se omiten rutas personales,
+identificadores privados y mensajes internos ajenos a la prueba. Las líneas,
+operaciones y resultados se cotejaron con el registro real; no se fabricó ni se
+volvió a ejecutar la prueba. La captura activacion_explicita.png conserva los
+datos de imagen originales y muestra el resultado de esta investigación, no las
+llamadas completas. La versión publicada omite únicamente metadatos XMP ajenos
+a la prueba, que contenían identificadores de documento.
+
+Fuente identificada públicamente como sesion_A.jsonl.
+SHA-256 del original consultado:
+119847fa30354cdd4460bd7d898bbee326fd1a3b60d6dd6286ca526e3be68705
+111 líneas físicas JSONL en la versión consultada; incluye actividad posterior
+de guardado del informe. El alias no es el nombre original.
+Fecha de la investigación: 12 de noviembre de 2026, inicio 13:18:57 UTC−05:00.
+
+Solicitud real, L14 (fragmentos del mensaje del usuario):
+«Utiliza explícitamente el skill `$incident-investigator` para investigar `logs_sinteticos.csv`.»
+«Aplica el procedimiento definido en `SKILL.md` y consulta `references/detection-rules.md`.»
+«Necesito comprobar que se utilizó realmente el skill. Deja visibles, si la interfaz lo permite, las operaciones de lectura de `SKILL.md` y `detection-rules.md`.»
+
+Operaciones y resultados reales, proyectados con sus líneas originales:
+
+1. L19, custom_tool_call de exec, ejecuta ambas lecturas:
+   Get-Content -LiteralPath '.agents/skills/incident-investigator/SKILL.md' -Raw
+   Get-Content -LiteralPath '.agents/skills/incident-investigator/references/detection-rules.md' -Raw
+   L21 conserva los dos resultados: lectura = 1 y lectura = 2,
+   status = fulfilled y value.exit_code = 0 para ambos.
+   El primero devuelve el frontmatter name: incident-investigator; el segundo
+   devuelve el contenido de las reglas.
+
+2. L30 vuelve a consultar ambos archivos con codificación UTF8:
+   Get-Content -LiteralPath '.agents/skills/incident-investigator/SKILL.md' -Encoding UTF8 -Raw
+   Get-Content -LiteralPath '.agents/skills/incident-investigator/references/detection-rules.md' -Encoding UTF8 -Raw
+   L32 conserva lectura = 1 y lectura = 2, status = fulfilled,
+   value.exit_code = 0 para ambos. Fragmentos de output:
+   name: incident-investigator
+   # Reglas de detección
+
+3. L35 → L37 conserva otra lectura de detection-rules.md y su resultado
+   exit_code = 0. L57 contiene el mensaje final de la investigación.
+
+Conclusión: ACTIVACIÓN CONFIRMADA mediante invocación explícita y lecturas
+reales exitosas del skill y sus reglas. La captura es un apoyo visual;
+esta traza aporta la verificación de las operaciones.
+
+Inspección de la captura: revisión visual y OCR local, sin rutas de perfiles,
+nombres de usuario del sistema operativo, identificadores de sesión ni tokens
+visibles. No se alteraron los datos de imagen: los bloques IDAT y todos los demás
+bloques conservados coinciden byte a byte con el original privado.
+SHA-256 del PNG original, conservado fuera del repositorio:
+6b4f98633e8ac220ff00a23d61d5ad0bc0b28650b222e1c5ade0085dd436e2b1
+SHA-256 de activacion_explicita.png publicado, sin el bloque XMP:
+3b8f2823a1d3a9923051d0e6ee20c3365231fe5d2452fe8c274e1576aa848c4d
